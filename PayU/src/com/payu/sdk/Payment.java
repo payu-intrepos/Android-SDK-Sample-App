@@ -23,6 +23,7 @@ public class Payment extends HashMap<String, String> {
         } else {
             return value;
         }
+        return value;
         // try {
         //     return URLEncoder.encode(value, "UTF-8");
         // } catch (UnsupportedEncodingException e) {
