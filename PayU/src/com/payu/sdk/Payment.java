@@ -20,9 +20,8 @@ public class Payment extends HashMap<String, String> {
         String value = super.get(key);
         if (value == null) {
             value = "";
-        } else {
-            return value;
-        }
+        } 
+        return value;
         // try {
         //     return URLEncoder.encode(value, "UTF-8");
         // } catch (UnsupportedEncodingException e) {
