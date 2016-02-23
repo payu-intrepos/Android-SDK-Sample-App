@@ -2,6 +2,7 @@ package com.payu.payuui;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
@@ -11,6 +12,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -24,14 +27,26 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.payu.custombrowser.Bank;
+import com.payu.custombrowser.CBConstant;
+import com.payu.custombrowser.CBUtil;
 import com.payu.custombrowser.PayUWebChromeClient;
 import com.payu.custombrowser.PayUWebViewClient;
 import com.payu.india.Extras.PayUSdkDetails;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Payu.PayuConstants;
+import com.payu.india.Payu.PayuUtils;
+import com.payu.magicretry.Helpers.Util;
+import com.payu.magicretry.MagicRetryFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class PaymentsActivity extends AppCompatActivity{
+public class PaymentsActivity extends AppCompatActivity implements MagicRetryFragment.ActivityCallback{
 
     Bundle bundle;
     String url;
@@ -41,6 +56,16 @@ public class PaymentsActivity extends AppCompatActivity{
     private String UTF = "UTF-8";
     private  boolean viewPortWide = false;
     private WebView mWebView;
+    private PayuUtils mPayuUtils;
+
+    private int storeOneClickHash;
+
+    private String merchantHash;
+    MagicRetryFragment magicRetryFragment;
+    String txnId = null;
+
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /**
@@ -56,31 +81,110 @@ public class PaymentsActivity extends AppCompatActivity{
         setContentView(R.layout.activity_payments);
         mWebView = (WebView) findViewById(R.id.webview);
 
+        WebView.setWebContentsDebuggingEnabled(true);
+        mPayuUtils = new PayuUtils();
+
         //region Replace the whole code by the commented code if you are NOT using custombrowser
         // Replace the whole code by the commented code if you are NOT using custombrowser.
 
-        /*bundle = getIntent().getExtras();
-        payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
-
-        mWebView = (WebView) findViewById(R.id.webview);
-
-        url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV?  PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL ;
-
-        byte[] encodedData = EncodingUtils.getBytes(payuConfig.getData(), "base64");
-        mWebView.postUrl(url, encodedData);
-
-
-        mWebView.getSettings().setSupportMultipleWindows(true);
-        mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setDomStorageEnabled(true);
-        mWebView.setWebChromeClient(new WebChromeClient() {});
-        mWebView.setWebViewClient(new WebViewClient() {});*/
-        //endregion
-
         bundle = getIntent().getExtras();
         payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
-        url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV?  PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL ;
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+        mWebView = (WebView) findViewById(R.id.webview);
+
+        switch (payuConfig.getEnvironment()) {
+            case PayuConstants.PRODUCTION_ENV:
+                url = PayuConstants.PRODUCTION_PAYMENT_URL;
+                break;
+            case PayuConstants.MOBILE_STAGING_ENV:
+                url = PayuConstants.MOBILE_TEST_PAYMENT_URL;
+                break;
+            case PayuConstants.STAGING_ENV:
+                url = PayuConstants.TEST_PAYMENT_URL;
+                break;
+            default:
+                url = PayuConstants.PRODUCTION_PAYMENT_URL;
+                break;
+        }
+
+        //        byte[] encodedData = EncodingUtils.getBytes(payuConfig.getData(), "base64");
+//        mWebView.postUrl(url, encodedData);
+
+
+//        mWebView.getSettings().setSupportMultipleWindows(true);
+//        mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+//        mWebView.getSettings().setJavaScriptEnabled(true);
+//        mWebView.getSettings().setDomStorageEnabled(true);
+//        mWebView.setWebChromeClient(new WebChromeClient() {});
+//        mWebView.setWebViewClient(new WebViewClient() {});
+
+//        mWebView.setWebChromeClient(new WebChromeClient() );
+//        mWebView.setWebViewClient(new WebViewClient());
+//        mWebView.getSettings().setJavaScriptEnabled(true);
+//        mWebView.getSettings().setDomStorageEnabled(true);
+//        mWebView.postUrl(url, payuConfig.getData().getBytes());
+//        mWebView.addJavascriptInterface(new Object() {
+//            @JavascriptInterface
+//            public void onSuccess() {
+//                onSuccess("");
+//            }
+//
+//            @JavascriptInterface
+//            public void onSuccess(final String result) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent();
+//                        intent.putExtra("result", result);
+//                        setResult(RESULT_OK, intent);
+//                        finish();
+//                    }
+////                }
+//                });
+//            }
+//
+//            @JavascriptInterface
+//            public void onFailure() {
+//                onFailure("");
+//            }
+//
+//            @JavascriptInterface
+//            public void onFailure(final String result) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent();
+//                        intent.putExtra("result", result);
+//                        setResult(RESULT_CANCELED, intent);
+//                        finish();
+//                    }
+//                });
+//            }
+//
+//
+//            @JavascriptInterface
+//            public void onMerchantHashReceived
+// (final String result) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            JSONObject cvvObject = new JSONObject(result);
+//                            // store the cvv in shared preferences.
+//                            mPayuUtils.storeInSharedPreferences(PaymentsActivity.this, cvvObject.getString(PayuConstants.CARD_TOKEN), cvvObject.getString(PayuConstants.MERCHANT_HASH));
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//            }
+//
+//        }, "PayU");
+        //endregion
+
+//        bundle = getIntent().getExtras();
+//        payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
+//        url = payuConfig.getEnvironment() == PayuConstants.PRODUCTION_ENV?  PayuConstants.PRODUCTION_PAYMENT_URL : PayuConstants.MOBILE_TEST_PAYMENT_URL ;
 
         // mWebView = (WebView) findViewById(R.id.webview);
         // mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -90,7 +194,7 @@ public class PaymentsActivity extends AppCompatActivity{
         }*/
 
         String [] list =  payuConfig.getData().split("&");
-        String txnId = null;
+
         String merchantKey = null;
         for (String item : list) {
             String[] items = item.split("=");
@@ -108,6 +212,7 @@ public class PaymentsActivity extends AppCompatActivity{
                             viewPortWide = true;
                         }
                         break;
+
                 }
             }
         }
@@ -151,11 +256,14 @@ public class PaymentsActivity extends AppCompatActivity{
             args.putInt(Bank.TRANS_LAYOUT, R.id.trans_overlay);
             args.putInt(Bank.MAIN_LAYOUT, R.id.r_layout);
             args.putBoolean(Bank.VIEWPORTWIDE, viewPortWide);
-
+            args.putBoolean(Bank.AUTO_SELECT_OTP, true);
+            args.putBoolean(Bank.AUTO_APPROVE, true);
             args.putString(Bank.TXN_ID, txnId == null ? String.valueOf(System.currentTimeMillis()) : txnId);
             args.putString(Bank.MERCHANT_KEY, null != merchantKey ? merchantKey : "could not find");
             PayUSdkDetails payUSdkDetails = new PayUSdkDetails();
             args.putString(Bank.SDK_DETAILS, payUSdkDetails.getSdkVersionName());
+            // should cb send the merchant hash back to app?
+            args.putInt(Bank.STORE_ONE_CLICK_HASH, storeOneClickHash);
             if(getIntent().getExtras().containsKey("showCustom")) {
                 args.putBoolean(Bank.SHOW_CUSTOMROWSER, getIntent().getBooleanExtra("showCustom", false));
             }
@@ -169,9 +277,17 @@ public class PaymentsActivity extends AppCompatActivity{
                 e.printStackTrace();
                 finish();
             }
+            initMagicRetry();
+
             mWebView.setWebChromeClient(new PayUWebChromeClient(bank));
-            mWebView.setWebViewClient(new PayUWebViewClient(bank));
+            mWebView.setWebViewClient(new PayUWebViewClient(bank, magicRetryFragment));
+            //mWebView is the WebView Object
+            magicRetryFragment.setWebView(mWebView);
+            // MR Integration - initMRSettingsFromSharedPreference
+            magicRetryFragment.initMRSettingsFromSharedPreference(this);
+
             mWebView.postUrl(url, payuConfig.getData().getBytes());
+            (new PayuUtils()).deviceAnalytics(PaymentsActivity.this, Bank.Version, merchantKey, txnId);
         } catch (ClassNotFoundException e) {
             mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
             mWebView.getSettings().setSupportMultipleWindows(true);
@@ -195,10 +311,15 @@ public class PaymentsActivity extends AppCompatActivity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             Intent intent = new Intent();
                             intent.putExtra("result", result);
-                            setResult(RESULT_OK, intent);
+                            if(storeOneClickHash == PayuConstants.STORE_ONE_CLICK_HASH_SERVER && null != merchantHash){
+                                intent.putExtra(PayuConstants.MERCHANT_HASH, merchantHash);
+                            }
+                            setResult(Activity.RESULT_OK, intent);
                             finish();
+
                         }
 //                }
                     });
@@ -221,6 +342,32 @@ public class PaymentsActivity extends AppCompatActivity{
                         }
                     });
                 }
+
+                @JavascriptInterface
+                public void onMerchantHashReceived(final String result) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (storeOneClickHash){
+                                case PayuConstants.STORE_ONE_CLICK_HASH_MOBILE:
+                                    try {
+                                        JSONObject hashObject = new JSONObject(result);
+                                        new PayuUtils().storeInSharedPreferences(PaymentsActivity.this, hashObject.getString(PayuConstants.CARD_TOKEN), hashObject.getString(PayuConstants.MERCHANT_HASH));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+
+                                    }
+                                    break;
+                                case PayuConstants.STORE_ONE_CLICK_HASH_SERVER:
+                                    merchantHash = result;
+                                    break;
+                                case PayuConstants.STORE_ONE_CLICK_HASH_NONE:
+                                    break;
+                            }
+                        }
+                    });
+                }
+
             }, "PayU");
 
             mWebView.setWebChromeClient(new WebChromeClient() );
@@ -292,7 +439,49 @@ public class PaymentsActivity extends AppCompatActivity{
     @Override
     public void onDestroy(){
         super.onDestroy();
-        // Log.v("#### PAYU", "PAYMENTSACTIVITY: ondestroy");
-        /*Debug.stopMethodTracing();*/
+    }
+
+    private void initMagicRetry() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        magicRetryFragment = new MagicRetryFragment();
+        Bundle newInformationBundle = new Bundle();
+        newInformationBundle.putString(MagicRetryFragment.KEY_TXNID, txnId);
+        magicRetryFragment.setArguments(newInformationBundle);
+
+        Map<String, String> urlList = new HashMap<String, String>();
+        urlList.put(url, payuConfig.getData());
+        magicRetryFragment.setUrlListWithPostData(urlList);
+
+        fragmentManager.beginTransaction().add(R.id.magic_retry_container, magicRetryFragment, "magicRetry").commit();
+        // magicRetryFragment = (MagicRetryFragment) fragmentManager.findFragmentBy(R.id.magicretry_fragment);
+
+        toggleFragmentVisibility(Util.HIDE_FRAGMENT);
+
+        magicRetryFragment.isWhiteListingEnabled(true);
+    }
+
+
+    public void toggleFragmentVisibility(int flag){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (!isFinishing()) {
+            if (flag == Util.SHOW_FRAGMENT) {
+                // Show fragment
+                ft.show(magicRetryFragment).commitAllowingStateLoss();
+            } else if (flag == Util.HIDE_FRAGMENT) {
+                // Hide fragment
+                ft.hide(magicRetryFragment).commitAllowingStateLoss();
+                // ft.hide(magicRetryFragment);
+                Log.v("#### PAYU", "hidhing magic retry");
+            }
+        }
+    }
+    @Override
+    public void showMagicRetry() {
+        toggleFragmentVisibility(Util.SHOW_FRAGMENT);
+    }
+
+    @Override
+    public void hideMagicRetry() {
+        toggleFragmentVisibility(Util.HIDE_FRAGMENT);
     }
 }

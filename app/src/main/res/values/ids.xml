@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <item name="k_merchant_key" type="id"/>
+    <item name="k_salt" type="id"/>
+    <item name="k_amount" type="id"/>
+    <item name="k_product_info" type="id"/>
+    <item name="k_first_name" type="id"/>
+    <item name="k_email" type="id"/>
+    <item name="k_txnid" type="id"/>
+    <item name="k_surl" type="id"/>
+    <item name="k_furl" type="id"/>
+    <item name="k_user_credentials" type="id"/>
+    <item name="k_udf1" type="id"/>
+    <item name="k_udf2" type="id"/>
+    <item name="k_udf3" type="id"/>
+    <item name="k_udf4" type="id"/>
+    <item name="k_udf5" type="id"/>
+    <item name="k_env" type="id"/>
+    <item name="k_offer_key" type="id"/>
+    <item name="k_store_one_click_payment" type="id"/>
+    <item name="k_sms_permission" type="id" />
+
+
+    <item name="v_merchant_key" type="id"/>
+    <item name="v_salt" type="id"/>
+    <item name="v_amount" type="id"/>
+    <item name="v_product_info" type="id"/>
+    <item name="v_first_name" type="id"/>
+    <item name="v_email" type="id"/>
+    <item name="v_txnid" type="id"/>
+    <item name="v_surl" type="id"/>
+    <item name="v_furl" type="id"/>
+    <item name="v_user_credentials" type="id"/>
+    <item name="v_udf1" type="id"/>
+    <item name="v_udf2" type="id"/>
+    <item name="v_udf3" type="id"/>
+    <item name="v_udf4" type="id"/>
+    <item name="v_udf5" type="id"/>
+    <item name="v_env" type="id"/>
+    <item name="v_offer_key" type="id"/>
+    <item name="v_store_one_click_payment" type="id"/>
+    <item name="v_sms_permission" type="id" />
+
+
+</resources>

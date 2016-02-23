@@ -29,79 +29,77 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/edit_text_offer_key"
+                <Spinner
+                    android:id="@+id/spinner_select_offer_mode"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="offer key"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true"
-                    android:enabled="false"/>
+                    android:layout_height="wrap_content"/>
 
-                <EditText
-                    android:id="@+id/edit_text_offer_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:hint="Offer Amount"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/edit_text_offer_category"
+                <LinearLayout
+                    android:id="@+id/linear_layout_new_card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="CC"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-                <EditText
-                    android:id="@+id/edit_text_offer_bank_code"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:text="CC"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
+                    <EditText
+                        android:id="@+id/edit_text_offer_card_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:hint="Card Mode (CC/DC)"
+                        android:imeOptions="flagNoExtractUi"
+                        android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/edit_text_offer_card_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:hint="Valid Card Number"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/edit_text_offer_name_on_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:hint="Name of card"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
+                    <EditText
+                        android:id="@+id/edit_text_offer_card_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:hint="Valid Card Number"
+                        android:imeOptions="flagNoExtractUi"
+                        android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/edit_text_offer_phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:text=" "
-                    android:hint="Phone number"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
-                <EditText
-                    android:id="@+id/edit_text_offer_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:text=" "
-                    android:hint="Email"
-                    android:imeOptions="flagNoExtractUi"
-                    android:singleLine="true" />
+                    <EditText
+                        android:id="@+id/edit_text_offer_name_on_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:hint="Name of card"
+                        android:imeOptions="flagNoExtractUi"
+                        android:singleLine="true" />
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_netbanking"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <Spinner
+                        android:id="@+id/spinner_netbanking"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </Spinner>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_stored_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <Spinner
+                        android:id="@+id/spinner_stored_cards"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

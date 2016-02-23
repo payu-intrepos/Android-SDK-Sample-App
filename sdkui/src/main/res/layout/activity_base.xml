@@ -29,6 +29,23 @@
                 android:padding="20dp">
 
                 <LinearLayout
+                    android:id="@+id/linear_layout_one_click_payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/button_one_click_payment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="One Click Payment"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/linear_layout_stored_card"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

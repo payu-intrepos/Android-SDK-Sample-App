@@ -19,12 +19,17 @@ import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PayuResponse;
 import com.payu.india.Model.PostData;
+import com.payu.india.Model.StoredCard;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
+import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
 import com.payu.india.PostParams.PaymentPostParams;
 import com.payu.india.PostParams.PayuWalletPostParams;
 import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PayUBaseActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
 
@@ -38,12 +43,18 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
     Button creditDebitButton;
     Button merchantPaymentButton;
     Button verifyApiButton;
+    Button oneClickPaymentButton;
     PayuConfig payuConfig;
+
+    ArrayList<StoredCard> storedCards;
+    ArrayList<StoredCard> oneClickCards;
+    HashMap<String, String> oneClickCardTokens;
 
 //    PaymentDefaultParams mPaymentDefaultParams;
     PaymentParams mPaymentParams;
     PayuHashes mPayUHashes;
 
+    int storeOneClickHash;
     Bundle bundle;
 
     @Override
@@ -57,6 +68,9 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 
+        storedCards = new ArrayList<>();
+        oneClickCards = new ArrayList<>();
+
         // leets register the buttons
         (netBankingButton = (Button) findViewById(R.id.button_netbanking)).setOnClickListener(this);
         (emiButton = (Button) findViewById(R.id.button_emi)).setOnClickListener(this);
@@ -66,6 +80,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
         (creditDebitButton = (Button) findViewById(R.id.button_credit_debit_card)).setOnClickListener(this);
         (merchantPaymentButton = (Button) findViewById(R.id.button_merchant_payment)).setOnClickListener(this);
         (verifyApiButton = (Button) findViewById(R.id.button_verify_api)).setOnClickListener(this);
+        (oneClickPaymentButton = (Button) findViewById(R.id.button_one_click_payment)).setOnClickListener(this);
 
         // lets collect the details from bundle to fetch the payment related details for a merchant
         bundle = getIntent().getExtras();
@@ -77,6 +92,9 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
 //        mPaymentDefaultParams = bundle.getParcelable(PayuConstants.PAYMENT_DEFAULT_PARAMS);
         mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS); // Todo change the name to PAYMENT_PARAMS
         mPayUHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+
+        oneClickCardTokens = (HashMap<String, String>) bundle.getSerializable(PayuConstants.ONE_CLICK_CARD_TOKENS);
 
         MerchantWebService merchantWebService = new MerchantWebService();
         merchantWebService.setKey(mPaymentParams.getKey());
@@ -170,10 +188,18 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
             launchPayumoney();
         }else if(id == R.id.button_stored_card){
             mIntent = new Intent(this, PayUStoredCardsActivity.class);
-            mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, mPayuResponse.getStoredCards());
+            mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, storedCards);
             launchActivity(mIntent);
         }else if(id == R.id.button_verify_api){
             mIntent = new Intent(this, PayUVerifyApiActivity.class);
+            mIntent.putParcelableArrayListExtra(PayuConstants.NETBANKING, mPayuResponse.getNetBanks());
+            mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, mPayuResponse.getStoredCards());
+//            mIntent.putExtra(PayuConstants.PAYU_RESPONSE, mPayuResponse);
+            launchActivity(mIntent);
+        }else if(id == R.id.button_one_click_payment){
+            mIntent = new Intent(this, PayUOneClickPaymentActivity.class);
+            mIntent.putParcelableArrayListExtra(PayuConstants.STORED_CARD, oneClickCards);
+            mIntent.putExtra(PayuConstants.ONE_CLICK_CARD_TOKENS, oneClickCardTokens);
             launchActivity(mIntent);
         }
     }
@@ -201,6 +227,7 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
     private void launchActivity(Intent intent) {
         intent.putExtra(PayuConstants.PAYU_HASHES, mPayUHashes);
         intent.putExtra(PayuConstants.PAYMENT_PARAMS, mPaymentParams);
+        intent.putExtra(PayuConstants.STORE_ONE_CLICK_HASH, storeOneClickHash);
         payuConfig.setData(null);
         intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
 
@@ -215,10 +242,36 @@ public class PayUBaseActivity extends AppCompatActivity implements View.OnClickL
     public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
         mPayuResponse = payuResponse;
         findViewById(R.id.progress_bar).setVisibility(View.GONE);
+        HashMap<String, ArrayList<StoredCard>> storedCardMap = new HashMap<>();
+        switch (storeOneClickHash){
+            case PayuConstants.STORE_ONE_CLICK_HASH_MOBILE:
+                storedCardMap = new PayuUtils().getStoredCard(this, mPayuResponse.getStoredCards());
+                storedCards = storedCardMap.get(PayuConstants.STORED_CARD);
+                oneClickCards = storedCardMap.get(PayuConstants.ONE_CLICK_CHECKOUT);
+                break;
+            case PayuConstants.STORE_ONE_CLICK_HASH_SERVER:
+                storedCardMap = new PayuUtils().getStoredCard(mPayuResponse.getStoredCards(), oneClickCardTokens);
+                storedCards = storedCardMap.get(PayuConstants.STORED_CARD);
+                oneClickCards = storedCardMap.get(PayuConstants.ONE_CLICK_CHECKOUT);
+                break;
+            case PayuConstants.STORE_ONE_CLICK_HASH_NONE: // all are stored cards.
+            default:
+                storeOneClickHash = 0;
+                storedCards = payuResponse.getStoredCards();
+                break;
+        }
+
+//        HashMap<String, ArrayList<StoredCard>> storedCardMap = new PayuUtils().getStoredCard(this, mPayuResponse.getStoredCards());
+//        HashMap<String, ArrayList<StoredCard>> storedCardMap = new PayuUtils().getStoredCard(mPayuResponse.getStoredCards(), oneClickCardTokens);
+
         if(payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR){ // ok we are good to go
             Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
-            if(payuResponse.isStoredCardsAvailable()){
+
+            if(payuResponse.isStoredCardsAvailable() && null != storedCards && storedCards.size() > 0){
                 findViewById(R.id.linear_layout_stored_card).setVisibility(View.VISIBLE);
+            }
+            if(payuResponse.isStoredCardsAvailable() && oneClickCards.size() > 0){
+                findViewById(R.id.linear_layout_one_click_payment).setVisibility(View.VISIBLE);
             }
             if(payuResponse.isNetBanksAvailable()){ // okay we have net banks now.
                 findViewById(R.id.linear_layout_netbanking).setVisibility(View.VISIBLE);

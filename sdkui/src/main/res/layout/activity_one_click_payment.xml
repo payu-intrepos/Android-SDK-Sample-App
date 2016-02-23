@@ -1,15 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.payuResponse.testapp.NetBankingActivity">
+    tools:context="com.payu.payuui.PayUOneClickPaymentActivity">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:layout_above="@+id/footer"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight=".70"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/text_view_amount"
@@ -39,36 +39,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight=".30"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="center">
 
-            <TextView
-                android:id="@+id/text_view_select_net_banking"
+            <ListView
+                android:id="@+id/list_view_one_click_payment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="Select Net banking"
-                android:textStyle="bold" />
-
-            <Spinner
-                android:id="@+id/spinner_netbanking"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="10dp" />
-
-            <Button
-                android:id="@+id/button_pay_now"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Pay now" />
         </LinearLayout>
-        <include
-            android:id="@+id/footer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/footer_image"
-            android:layout_alignParentBottom="true"/>
     </LinearLayout>
+    <include
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/footer_image"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>
+

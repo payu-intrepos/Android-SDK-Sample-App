@@ -4,10 +4,12 @@
     android:layout_height="match_parent"
     tools:context="com.payuResponse.testapp.CardActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -112,12 +114,30 @@
                 android:maxLength="4"
                 android:singleLine="true" />
 
-            <CheckBox
-                android:id="@+id/check_box_save_card"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:text="Store card" />
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/check_box_save_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:layout_margin="2dp"
+                    android:text="Store card" />
+
+                <CheckBox
+                    android:id="@+id/check_box_enable_one_click_payment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:layout_margin="2dp"
+                    android:text="Enable One click payment"/>
+
+            </LinearLayout>
+
+
 
             <Button
                 android:id="@+id/button_card_make_payment"
@@ -177,6 +197,7 @@
         </LinearLayout>
 
     </LinearLayout>
+    </ScrollView>
 
     <!--<TextView-->
         <!--android:id="@+id/text_view_note"-->

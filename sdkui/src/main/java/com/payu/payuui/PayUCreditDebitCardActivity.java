@@ -40,6 +40,7 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
     private EditText cardExpiryYearEditText;
     private Bundle bundle;
     private CheckBox saveCardCheckBox;
+    private CheckBox enableOneClickPaymentCheckBox;
 
     private String cardName;
     private String cardNumber;
@@ -57,6 +58,8 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
     private PayuConfig payuConfig;
 
     private PayuUtils payuUtils;
+
+    int storeOneClickHash;
 
 
     @Override
@@ -78,9 +81,13 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         cardExpiryMonthEditText = (EditText) findViewById(R.id.edit_text_expiry_month);
         cardExpiryYearEditText = (EditText) findViewById(R.id.edit_text_expiry_year);
         saveCardCheckBox = (CheckBox) findViewById(R.id.check_box_save_card);
+        enableOneClickPaymentCheckBox = (CheckBox) findViewById(R.id.check_box_enable_one_click_payment);
 
         bundle = getIntent().getExtras();
 
+        storeOneClickHash = bundle.getInt(PayuConstants.STORE_ONE_CLICK_HASH);
+        if(storeOneClickHash == PayuConstants.STORE_ONE_CLICK_HASH_NONE)
+            enableOneClickPaymentCheckBox.setVisibility(View.GONE);
 
         // lets get payment default params and hashes
         mPayuHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
@@ -92,11 +99,12 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
         (transactionIdTextView = (TextView) findViewById(R.id.text_view_transaction_id)).setText(PayuConstants.TXNID + ": " + mPaymentParams.getTxnId());
 
         // lets not show the save card check box if user credentials is not found!
-        if(null == mPaymentParams.getUserCredentials())
+        if(null == mPaymentParams.getUserCredentials()) {
             saveCardCheckBox.setVisibility(View.GONE);
-        else
+            enableOneClickPaymentCheckBox.setVisibility(View.GONE);
+        }else {
             saveCardCheckBox.setVisibility(View.VISIBLE);
-
+        }
         payuUtils = new PayuUtils();
 
 
@@ -174,6 +182,15 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
             }else{
                 mPaymentParams.setStoreCard(0);
             }
+
+            // do i have to store the cvv
+            if (enableOneClickPaymentCheckBox.isChecked()) {
+                mPaymentParams.setEnableOneClickPayment(1);
+            }else{
+                mPaymentParams.setEnableOneClickPayment(0);
+            }
+
+
             // setup the hash
             mPaymentParams.setHash(mPayuHashes.getPaymentHash());
 
@@ -201,6 +218,7 @@ public class PayUCreditDebitCardActivity extends AppCompatActivity implements Vi
                 payuConfig.setData(postData.getResult());
                 Intent intent = new Intent(this, PaymentsActivity.class);
                 intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+                intent.putExtra(PayuConstants.STORE_ONE_CLICK_HASH, storeOneClickHash);
                 startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
             } else {
                 Toast.makeText(this, postData.getResult(), Toast.LENGTH_LONG).show();
