@@ -6,34 +6,27 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.webkit.WebView;
-import android.widget.EditText;
 
 import com.payu.custombrowser.Bank;
 import com.payu.custombrowser.CustomBrowser;
 import com.payu.custombrowser.PackageListDialogFragment;
 import com.payu.custombrowser.PayUCustomBrowserCallback;
-import com.payu.custombrowser.PayUSurePayWebViewClient;
 import com.payu.custombrowser.PayUWebChromeClient;
-import com.payu.custombrowser.PayUWebViewClient;
 import com.payu.custombrowser.bean.CustomBrowserConfig;
 //import com.payu.custombrowser.upiintent.Payment;
-import com.payu.custombrowser.util.PaymentOption;
 import com.payu.india.Extras.PayUChecksum;
 import com.payu.india.Model.PayuConfig;
 //import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.paymentparamhelper.PostData;
-import com.payu.payuui.R;
 import com.payu.phonepe.PhonePe;
 import com.payu.phonepe.callbacks.PayUPhonePeCallback;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PaymentsActivity extends FragmentActivity {
     private Bundle bundle;
