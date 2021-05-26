@@ -42,7 +42,7 @@
                     ></TextView>
 
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/pager_saved_card"
                     android:layout_width="match_parent"
                     android:layout_marginLeft="10dp"
