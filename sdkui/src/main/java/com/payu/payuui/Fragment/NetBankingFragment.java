@@ -4,11 +4,11 @@ package com.payu.payuui.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -83,7 +83,7 @@ public class NetBankingFragment extends Fragment implements View.OnClickListener
         (iciciImageButton = (ImageButton) view.findViewById(R.id.image_button_icici)).setOnClickListener(this);
 
 
-        mBundle = ((PayUBaseActivity) getActivity()).bundle;
+    //    mBundle = ((PayUBaseActivity) getActivity()).bundle;
         mPaymentParams = mBundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
         payuHashes = mBundle.getParcelable(PayuConstants.PAYU_HASHES);
         payuConfig = mBundle.getParcelable(PayuConstants.PAYU_CONFIG);
@@ -214,7 +214,11 @@ public class NetBankingFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBundle = ((PayUBaseActivity) getActivity()).bundle;
+        mPaymentParams = mBundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
+        if (mPaymentParams.getSiParams()==null)
         netBankingList = getArguments().getParcelableArrayList(PayuConstants.NETBANKING);
+        else netBankingList  = getArguments().getParcelableArrayList(PayuConstants.SINETBANKING);
         valueAddedHashMap = (HashMap<String, Integer>) getArguments().getSerializable(SdkUIConstants.VALUE_ADDED);
     }
 }

@@ -5,7 +5,7 @@ import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -13,7 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.payu.india.Interfaces.BinInfoApiListener;
 import com.payu.india.Interfaces.GetOfferStatusApiListener;
 import com.payu.india.Model.CardStatus;
 import com.payu.india.Model.MerchantWebService;
@@ -36,14 +37,18 @@ import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
+import com.payu.india.Tasks.BinInfoTask;
 import com.payu.india.Tasks.GetOfferStatusTask;
+import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 import com.payu.paymentparamhelper.PaymentParams;
 import com.payu.paymentparamhelper.PostData;
+import com.payu.paymentparamhelper.siparams.SIParams;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 import com.payu.payuui.Widget.MonthYearPickerDialog;
 
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -51,7 +56,7 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreditDebitFragment extends Fragment implements GetOfferStatusApiListener {
+public class CreditDebitFragment extends Fragment implements BinInfoApiListener,GetOfferStatusApiListener {
 
     private PayuHashes mPayuHashes;
     private PaymentParams mPaymentParams;
@@ -85,10 +90,13 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
     private LinearLayout mLinearLayout;
     private TextView amountText;
     private TextView issuingBankDown;
+    private TextView tv_consent_text;
     private ViewPager viewpager;
     private int fragmentPosition;
     private View view;
-
+    private SIParams siParams;
+    private String salt;
+    private Bundle bundle;
     public CreditDebitFragment() {
         // Required empty public constructor
     }
@@ -100,6 +108,8 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         fragmentBundle = getArguments();
         valueAddedHashMap = (HashMap<String, CardStatus>) fragmentBundle.getSerializable(SdkUIConstants.VALUE_ADDED);
         fragmentPosition = fragmentBundle.getInt(SdkUIConstants.POSITION);
+        bundle = getActivity().getIntent().getExtras();
+        salt = bundle.getString(PayuConstants.SALT);
     }
 
     @Override
@@ -124,6 +134,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         cvvImage = (ImageView) view.findViewById(R.id.image_cvv);
         mLinearLayout = (LinearLayout) view.findViewById(R.id.layout_expiry_date);
         issuingBankDown = (TextView) view.findViewById(R.id.text_view_issuing_bank_down_error);
+        tv_consent_text = view.findViewById(R.id.tv_consent_text);
 
         amountText = (TextView) getActivity().findViewById(R.id.textview_amount);
 
@@ -250,6 +261,12 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             saveCardCheckBox.setVisibility(View.VISIBLE);
         }
 
+        if (mPaymentParams.getSiParams()!=null){
+             siParams = mPaymentParams.getSiParams();
+            tv_consent_text.setVisibility(View.VISIBLE);
+        }else {
+            tv_consent_text.setVisibility(View.GONE);
+        }
 
 
         payuUtils = new PayuUtils();
@@ -277,6 +294,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                 if (charSequence.length() > 6) { // to confirm rupay card we need min 6 digit.
                     if (null == issuer){
                         issuer = payuUtils.getIssuer(charSequence.toString().replace(" ",""));
+                            getBinInfo();
                     }
                     if (issuer != null && issuer.length() > 1 ) {
                         image = getIssuerImage(issuer);
@@ -486,9 +504,9 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
     }
 
     public void cardValidation(){
-
         if (!(payuUtils.validateCardNumber(cardNumberEditText.getText().toString().replace(" ", ""))) && cardNumberEditText.length() > 0 ) {
             cardImage.setImageResource(R.drawable.error_icon);
+
             isCardNumberValid = false;
             amountText.setText(SdkUIConstants.AMOUNT + ": " + mPaymentParams.getAmount());
 //            uiValidation();
@@ -497,6 +515,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             isCardNumberValid = true;
             if(mPaymentParams.getOfferKey() != null && null != mPaymentParams.getUserCredentials())
             getOfferStatus();
+          //  getBinInfo();
 //            uiValidation();
         }else{
             isCardNumberValid = false;
@@ -529,6 +548,26 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             getOfferStatusTask.execute(payuConfig);
 
             // lets cancel the dialog.
+        }else{
+            Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
+        }
+    }
+    private void getBinInfo() {
+        merchantWebService = new MerchantWebService();
+        merchantWebService.setKey(mPaymentParams.getKey());
+        merchantWebService.setCommand(PayuConstants.GET_BIN_INFO);
+        merchantWebService.setVar1("1");
+        ;
+        merchantWebService.setVar2(cardNumberEditText.getText().toString().replace(" ", ""));
+        merchantWebService.setHash(calculateHash("" + mPaymentParams.getKey() + "|" + PayuConstants.GET_BIN_INFO + "|" + 1 + "|" +salt));
+
+        postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            payuConfig.setData(postData.getResult());
+
+           BinInfoTask binInfoTask = new BinInfoTask(CreditDebitFragment.this);
+           binInfoTask.execute(payuConfig);
         }else{
             Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
         }
@@ -583,4 +622,31 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         cardValidation();
     }
 
+    @Override
+    public void onBinInfoApiResponse(PayuResponse payuResponse) {
+        if (getActivity() != null && payuResponse.getCardInformation() != null) {
+            Toast.makeText(getActivity(), "Response status: " + payuResponse.getCardInformation() + ": cardInfo = " + payuResponse.getCardInformation(), Toast.LENGTH_LONG).show();
+           siParams.setCcCardType(getCardType(payuResponse.getCardInformation().getCardCategory()));
+           siParams.setCcCategory(payuResponse.getCardInformation().getCardType());
+        }
+    }
+    private String calculateHash(String hashString) {
+        try {
+            StringBuilder hash = new StringBuilder();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(hashString.getBytes());
+            byte[] mdbytes = messageDigest.digest();
+            for (byte hashByte : mdbytes) {
+                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+            return hash.toString();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+    private String getCardType(String cardType)  {
+        if(cardType.equalsIgnoreCase("CC"))
+            return  "CC";
+        else return "DC";
+    }
 }

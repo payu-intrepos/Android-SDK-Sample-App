@@ -55,7 +55,7 @@
            />
 
 
-       <android.support.v4.view.ViewPager
+       <androidx.viewpager.widget.ViewPager
            android:layout_above="@+id/button_pay_now"
            android:layout_below="@id/sliding_tab_layout"
            android:id="@+id/pager"

@@ -5,12 +5,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,8 +28,16 @@ import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.paymentparamhelper.PaymentParams;
 import com.payu.paymentparamhelper.PostData;
+import com.payu.paymentparamhelper.siparams.BeneficiaryDetails;
+import com.payu.paymentparamhelper.siparams.SIParams;
+import com.payu.paymentparamhelper.siparams.SIParamsDetails;
+import com.payu.paymentparamhelper.siparams.enums.BeneficiaryAccountType;
+import com.payu.paymentparamhelper.siparams.enums.BillingCycle;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 
@@ -52,6 +63,31 @@ public class MainActivity extends AppCompatActivity {
     // Used when generating hash from SDK
     private PayUChecksum checksum;
     String salt = null;
+    //params for si
+    private Boolean isFreeTrial = false;
+    private BillingCycle billingCycle = null;
+    private int billingInterval = 1;
+    private String billingamount = "1";
+    private String billingCurrency = "INR";
+    private String paymentStartDate ="2021-12-24";
+    private String paymentEndDate = "2022-12-24";
+    private String remarks = " ";
+    private String beneficiaryName = "Puspendra";
+    private String beneficiaryAccountNumber = "918010049677264";
+    private BeneficiaryAccountType beneficiaryAccountType = BeneficiaryAccountType.SAVINGS;
+
+    private Boolean siShow = false;
+    private String siHash;
+    private Spinner billingCycleSpinner;
+    private SwitchCompat freeTrial;
+    private EditText billingamountText ;
+    private EditText billingIntervalText;
+    private EditText paymentStartDateText;
+    private EditText paymentEndDateText;
+    private SwitchCompat si;
+    private LinearLayout siView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO Must write below code in your activity to set up initial context for PayU
         Payu.setInstance(this);
-
+     freeTrial = findViewById(R.id.sp_free_trial);
         // lets set up the tool bar;
         Toolbar toolBar = (Toolbar) findViewById(R.id.app_bar);
         toolBar.setTitle("PayU Demo App");
@@ -70,7 +106,18 @@ public class MainActivity extends AppCompatActivity {
         PayUSdkDetails payUSdkDetails = new PayUSdkDetails();
 
         Toast.makeText(this, "Build No: " + payUSdkDetails.getSdkBuildNumber() + "\n Build Type: " + payUSdkDetails.getSdkBuildType() + " \n Build Flavor: " + payUSdkDetails.getSdkFlavor() + "\n Application Id: " + payUSdkDetails.getSdkApplicationId() + "\n Version Code: " + payUSdkDetails.getSdkVersionCode() + "\n Version Name: " + payUSdkDetails.getSdkVersionName(), Toast.LENGTH_LONG).show();
-
+        billingCycleSpinner = findViewById(R.id.et_billingCycle_value);
+        // Creating adapter for spinner
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, billingCyclearr);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        billingCycleSpinner.setAdapter(arrayAdapter);
+      billingCycleSpinner.setSelection(0);
+      billingIntervalText = findViewById(R.id.et_billingInterval_value);
+      billingamountText = findViewById(R.id.et_billingAmount_value);
+      paymentStartDateText = findViewById(R.id.et_paymentStartDate_value);
+      paymentEndDateText = findViewById(R.id.et_paymentEndDate_value);
+      si = findViewById(R.id.switch_si_on_off);
+      siView = findViewById(R.id.siView);
         //Lets setup the environment spinner
         environmentSpinner = (Spinner) findViewById(R.id.spinner_environment);
         //  List<String> list = new ArrayList<String>();
@@ -108,10 +155,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        si.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)siView.setVisibility(View.VISIBLE);
+                else siView.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PayuConstants.PAYU_REQUEST_CODE) {
             if (data != null) {
 
@@ -155,9 +209,14 @@ public class MainActivity extends AppCompatActivity {
             environment = PayuConstants.STAGING_ENV;
         else
             environment = PayuConstants.PRODUCTION_ENV;
-
+        isFreeTrial = freeTrial.isChecked();
         userCredentials = merchantKey + ":" + email;
-
+        billingCycle = BillingCycle.valueOf(billingCycleSpinner.getSelectedItem().toString());
+        billingInterval = Integer.parseInt(billingIntervalText.getText().toString());
+        billingamount = billingamountText.getText().toString();
+        paymentStartDate = paymentStartDateText.getText().toString();
+        paymentEndDate = paymentEndDateText.getText().toString();
+        siShow = si.isChecked();
         //TODO Below are mandatory params for hash genetation
         mPaymentParams = new PaymentParams();
         /**
@@ -170,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
         mPaymentParams.setFirstName("AnkitTEST");
         mPaymentParams.setEmail("ankitmonani@colive.com");
         mPaymentParams.setPhone("");
+        if (siShow) {
+            mPaymentParams.setSiParams(setSiDeatils());
+        }
 
 //        mPaymentParams.setBeneficiaryAccountNumber("50100041412026");
 
@@ -280,6 +342,9 @@ public class MainActivity extends AppCompatActivity {
         if (mPaymentParams.getSubventionAmount() != null && !mPaymentParams.getSubventionAmount().isEmpty()){
             subventionHash = calculateHash(""+mPaymentParams.getKey()+"|"+mPaymentParams.getTxnId()+"|"+mPaymentParams.getAmount()+"|"+mPaymentParams.getProductInfo()+"|"+mPaymentParams.getFirstName()+"|"+mPaymentParams.getEmail()+"|"+mPaymentParams.getUdf1()+"|"+mPaymentParams.getUdf2()+"|"+mPaymentParams.getUdf3()+"|"+mPaymentParams.getUdf4()+"|"+mPaymentParams.getUdf5()+"||||||"+salt+"|"+mPaymentParams.getSubventionAmount());
         }
+        if (mPaymentParams.getSiParams()!=null){
+            siHash = calculateHash(""+mPaymentParams.getKey()+"|"+mPaymentParams.getTxnId()+"|"+mPaymentParams.getAmount()+"|"+mPaymentParams.getProductInfo()+"|"+mPaymentParams.getFirstName()+"|"+mPaymentParams.getEmail()+"|"+mPaymentParams.getUdf1()+"|"+mPaymentParams.getUdf2()+"|"+mPaymentParams.getUdf3()+"|"+mPaymentParams.getUdf4()+"|"+mPaymentParams.getUdf5()+"||||||"+prepareSiDetails()+"|"+salt);
+        }
 
         /*}
 
@@ -359,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
         intent.putExtra(PayuConstants.PAYMENT_PARAMS, mPaymentParams);
         intent.putExtra(SdkUIConstants.SUBVENTION_HASH, subventionHash);
+        intent.putExtra(SdkUIConstants.SI_HASH,siHash);
         intent.putExtra(PayuConstants.SALT,salt);
         intent.putExtra(PayuConstants.PAYU_HASHES, payuHashes);
         startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
@@ -386,6 +452,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private SIParams setSiDeatils(){
+        SIParams siParams = new SIParams();
+        siParams.setFree_trial(false);
+    BeneficiaryDetails beneficiaryDetails = new BeneficiaryDetails();
+    beneficiaryDetails.setBeneficiaryName(beneficiaryName);
+    beneficiaryDetails.setBeneficiaryAccountNumber(beneficiaryAccountNumber);
+    beneficiaryDetails.setBeneficiaryAccountType(beneficiaryAccountType);
+    siParams.setBeneficiarydetail(beneficiaryDetails);
+    SIParamsDetails siParamsDetails = new SIParamsDetails();
+    siParamsDetails.setBillingAmount(billingamount);
+    siParamsDetails.setBillingCurrency(billingCurrency);
+    siParamsDetails.setBillingCycle(billingCycle);
+    siParamsDetails.setBillingInterval(1);
+    siParamsDetails.setPaymentStartDate(paymentStartDate);
+    siParamsDetails.setPaymentEndDate(paymentEndDate);
+    siParamsDetails.setRemarks("");
+    siParams.setSi_details(siParamsDetails);
+    return siParams;
+}
+   private JSONObject prepareSiDetails(){
+        JSONObject siObject = new JSONObject();
+       try {
+           siObject.put("billingAmount",billingamount);
+           siObject.put("billingCurrency",billingCurrency);
+           siObject.put("billingCycle",billingCycle);
+           siObject.put("billingInterval",billingInterval);
+           siObject.put("paymentStartDate",paymentStartDate);
+           siObject.put("paymentEndDate",paymentEndDate);
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+       return siObject;
+   }
 
+   String[] billingCyclearr= {"DAILY", "WEEKLY", "MONTHLY", "YEARLY", "ONCE", "ADHOC"};
 
+ private void hidesiview(){
+
+ }
 }

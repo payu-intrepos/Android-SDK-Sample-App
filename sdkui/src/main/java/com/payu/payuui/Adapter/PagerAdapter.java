@@ -1,9 +1,9 @@
 package com.payu.payuui.Adapter;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.payu.india.Model.PayuResponse;
 import com.payu.india.Payu.PayuConstants;
@@ -69,6 +69,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case SdkUIConstants.NET_BANKING:
                 fragment = new NetBankingFragment();
                 bundle.putParcelableArrayList(PayuConstants.NETBANKING, payuResponse.getNetBanks());
+                bundle.putParcelableArrayList(PayuConstants.SINETBANKING,payuResponse.getSiBankList());
                 bundle.putSerializable(SdkUIConstants.VALUE_ADDED, valueAddedResponse.getNetBankingDownStatus());
                 fragment.setArguments(bundle);
                 mPageReference.put(i, fragment);
