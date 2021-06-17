@@ -83,6 +83,7 @@
     <string name="choose_the_wallet_option">Choose the Wallet option</string>
     <string name="redirection_text_wallet">You will be redirected to your wallet website to  complete payment</string>
     <string name="payu_si_consent_text">By proceeding further, you authorize PayU Payments Ltd. to debit from your bank account, and also agree to set up for standing instructions.</string>
+    <string name="payu_si_error_text">Card does not support SI txn</string>
 
 
 </resources>

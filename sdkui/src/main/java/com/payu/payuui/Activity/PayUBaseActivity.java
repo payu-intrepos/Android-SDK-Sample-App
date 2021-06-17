@@ -51,6 +51,7 @@ import com.payu.payuui.Fragment.CreditDebitFragment;
 import com.payu.payuui.Fragment.SavedCardItemFragment;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
+import com.payu.payuui.SdkuiUtil.Utils;
 import com.payu.payuui.Widget.SwipeTab.SlidingTabLayout;
 import com.payu.phonepe.PhonePe;
 import com.payu.samsungpay.PayUSUPIPostData;
@@ -606,7 +607,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     }
 
 
-    private void makePaymentByNB() {
+    public void makePaymentByNB() {
 
         spinnerNetbanking = (Spinner) findViewById(R.id.spinner);
         ArrayList<PaymentDetails> netBankingList = null;
@@ -693,7 +694,9 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         SavedCardItemFragmentAdapter mSaveAdapter = (SavedCardItemFragmentAdapter) viewPager.getAdapter();
         SavedCardItemFragment mSaveFragment = mSaveAdapter.getFragment(viewPager.getCurrentItem()) instanceof SavedCardItemFragment ? mSaveAdapter.getFragment(viewPager.getCurrentItem()) : null;
         String cvv = mSaveFragment !=null ? mSaveFragment.getCvv() : null;
-
+        String cardbin = selectedStoredCard.getCardBin();
+        Utils utils = new Utils();
+        utils.getBinInfo(this,payuConfig,mPaymentParams,cardbin);
         // lets try to get the post params
         selectedStoredCard.setCvv(cvv); // make sure that you set the cvv also
 
@@ -703,7 +706,14 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         mPaymentParams.setCardName(selectedStoredCard.getCardName());
         mPaymentParams.setExpiryMonth(selectedStoredCard.getExpiryMonth());
         mPaymentParams.setExpiryYear(selectedStoredCard.getExpiryYear());
+        mPaymentParams.setCvv(cvv);
 
+        if (mPaymentParams.getSiParams()!=null){
+            String siHash = bundle.getString(SdkUIConstants.SI_HASH);
+            if (siHash!=null && siHash.isEmpty()==false){
+                mPaymentParams.setHash(siHash);
+            }
+        }
 
 
         try {

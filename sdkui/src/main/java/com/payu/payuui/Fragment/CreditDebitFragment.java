@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.payu.india.Interfaces.BinInfoApiListener;
 import com.payu.india.Interfaces.GetOfferStatusApiListener;
 import com.payu.india.Model.CardStatus;
 import com.payu.india.Model.MerchantWebService;
@@ -46,6 +45,7 @@ import com.payu.paymentparamhelper.siparams.SIParams;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
+import com.payu.payuui.SdkuiUtil.Utils;
 import com.payu.payuui.Widget.MonthYearPickerDialog;
 
 import java.security.MessageDigest;
@@ -56,7 +56,7 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreditDebitFragment extends Fragment implements BinInfoApiListener,GetOfferStatusApiListener {
+public class CreditDebitFragment extends Fragment implements GetOfferStatusApiListener {
 
     private PayuHashes mPayuHashes;
     private PaymentParams mPaymentParams;
@@ -91,12 +91,14 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
     private TextView amountText;
     private TextView issuingBankDown;
     private TextView tv_consent_text;
+    private TextView tv_error_text;
     private ViewPager viewpager;
     private int fragmentPosition;
     private View view;
-    private SIParams siParams;
-    private String salt;
-    private Bundle bundle;
+    private Boolean siMode = false;
+
+
+    private Utils utils;
     public CreditDebitFragment() {
         // Required empty public constructor
     }
@@ -108,8 +110,7 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         fragmentBundle = getArguments();
         valueAddedHashMap = (HashMap<String, CardStatus>) fragmentBundle.getSerializable(SdkUIConstants.VALUE_ADDED);
         fragmentPosition = fragmentBundle.getInt(SdkUIConstants.POSITION);
-        bundle = getActivity().getIntent().getExtras();
-        salt = bundle.getString(PayuConstants.SALT);
+          utils = new Utils();
     }
 
     @Override
@@ -120,7 +121,6 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         view = inflater.inflate(R.layout.fragment_credit_debit, container, false);
 
         viewpager = (ViewPager) getActivity().findViewById(R.id.pager);
-
 
         nameOnCardEditText = (EditText) view.findViewById(R.id.edit_text_name_on_card);
         cardNumberEditText = (EditText) view.findViewById(R.id.edit_text_card_number);
@@ -135,7 +135,7 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         mLinearLayout = (LinearLayout) view.findViewById(R.id.layout_expiry_date);
         issuingBankDown = (TextView) view.findViewById(R.id.text_view_issuing_bank_down_error);
         tv_consent_text = view.findViewById(R.id.tv_consent_text);
-
+        tv_error_text = view.findViewById(R.id.tv_error_text);
         amountText = (TextView) getActivity().findViewById(R.id.textview_amount);
 
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -262,7 +262,6 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         }
 
         if (mPaymentParams.getSiParams()!=null){
-             siParams = mPaymentParams.getSiParams();
             tv_consent_text.setVisibility(View.VISIBLE);
         }else {
             tv_consent_text.setVisibility(View.GONE);
@@ -294,7 +293,17 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
                 if (charSequence.length() > 6) { // to confirm rupay card we need min 6 digit.
                     if (null == issuer){
                         issuer = payuUtils.getIssuer(charSequence.toString().replace(" ",""));
-                            getBinInfo();
+                            utils.getBinInfo(getActivity(),payuConfig,mPaymentParams,cardNumberEditText.getText().toString());
+                            if ( mPaymentParams.getSiParams()!=null) {
+                                if (utils.errorMessage!=null) {
+                                    tv_error_text.setVisibility(View.VISIBLE);
+                                    utils.errorMessage=null;
+                                }
+                                else {
+                                    siMode = true;
+                                    tv_error_text.setVisibility(View.GONE);
+                                }
+                            }
                     }
                     if (issuer != null && issuer.length() > 1 ) {
                         image = getIssuerImage(issuer);
@@ -392,7 +401,6 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
                     if(viewpager.getCurrentItem() == fragmentPosition)
                         getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
                 }
-
 
             }
 
@@ -552,26 +560,7 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
             Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
         }
     }
-    private void getBinInfo() {
-        merchantWebService = new MerchantWebService();
-        merchantWebService.setKey(mPaymentParams.getKey());
-        merchantWebService.setCommand(PayuConstants.GET_BIN_INFO);
-        merchantWebService.setVar1("1");
-        ;
-        merchantWebService.setVar2(cardNumberEditText.getText().toString().replace(" ", ""));
-        merchantWebService.setHash(calculateHash("" + mPaymentParams.getKey() + "|" + PayuConstants.GET_BIN_INFO + "|" + 1 + "|" +salt));
 
-        postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
-
-        if (postData.getCode() == PayuErrors.NO_ERROR) {
-            payuConfig.setData(postData.getResult());
-
-           BinInfoTask binInfoTask = new BinInfoTask(CreditDebitFragment.this);
-           binInfoTask.execute(payuConfig);
-        }else{
-            Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
-        }
-    }
 
     public void uiValidation(){
 
@@ -588,6 +577,9 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         }
         else {
             if(viewpager.getCurrentItem() == fragmentPosition)
+            getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
+        }
+        if (mPaymentParams.getSiParams()!=null && siMode==false){
             getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
         }
 
@@ -622,31 +614,4 @@ public class CreditDebitFragment extends Fragment implements BinInfoApiListener,
         cardValidation();
     }
 
-    @Override
-    public void onBinInfoApiResponse(PayuResponse payuResponse) {
-        if (getActivity() != null && payuResponse.getCardInformation() != null) {
-            Toast.makeText(getActivity(), "Response status: " + payuResponse.getCardInformation() + ": cardInfo = " + payuResponse.getCardInformation(), Toast.LENGTH_LONG).show();
-           siParams.setCcCardType(getCardType(payuResponse.getCardInformation().getCardCategory()));
-           siParams.setCcCategory(payuResponse.getCardInformation().getCardType());
-        }
-    }
-    private String calculateHash(String hashString) {
-        try {
-            StringBuilder hash = new StringBuilder();
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
-            messageDigest.update(hashString.getBytes());
-            byte[] mdbytes = messageDigest.digest();
-            for (byte hashByte : mdbytes) {
-                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
-            }
-            return hash.toString();
-        } catch (Exception e) {
-            return "ERROR";
-        }
-    }
-    private String getCardType(String cardType)  {
-        if(cardType.equalsIgnoreCase("CC"))
-            return  "CC";
-        else return "DC";
-    }
 }

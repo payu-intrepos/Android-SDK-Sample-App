@@ -277,6 +277,17 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/tv_error_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15dp"
+                        android:textColor="@color/cb_errorRed"
+                        android:letterSpacing="0.06"
+                        android:lineSpacingExtra="4sp"
+                        android:layout_margin="10dp"
+                        android:visibility="gone"
+                        android:text="@string/payu_si_error_text" />
+                    <TextView
                         android:id="@+id/tv_consent_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
