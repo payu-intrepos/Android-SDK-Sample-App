@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.viewpager.widget.ViewPager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,19 +34,14 @@ import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
-import com.payu.india.Tasks.BinInfoTask;
 import com.payu.india.Tasks.GetOfferStatusTask;
-import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 import com.payu.paymentparamhelper.PaymentParams;
 import com.payu.paymentparamhelper.PostData;
-import com.payu.paymentparamhelper.siparams.SIParams;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
-import com.payu.payuui.SdkuiUtil.Utils;
 import com.payu.payuui.Widget.MonthYearPickerDialog;
 
-import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -95,10 +88,8 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
     private ViewPager viewpager;
     private int fragmentPosition;
     private View view;
-    private Boolean siMode = false;
 
 
-    private Utils utils;
     public CreditDebitFragment() {
         // Required empty public constructor
     }
@@ -110,7 +101,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         fragmentBundle = getArguments();
         valueAddedHashMap = (HashMap<String, CardStatus>) fragmentBundle.getSerializable(SdkUIConstants.VALUE_ADDED);
         fragmentPosition = fragmentBundle.getInt(SdkUIConstants.POSITION);
-          utils = new Utils();
     }
 
     @Override
@@ -293,17 +283,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                 if (charSequence.length() > 6) { // to confirm rupay card we need min 6 digit.
                     if (null == issuer){
                         issuer = payuUtils.getIssuer(charSequence.toString().replace(" ",""));
-                            utils.getBinInfo(getActivity(),payuConfig,mPaymentParams,cardNumberEditText.getText().toString());
-                            if ( mPaymentParams.getSiParams()!=null) {
-                                if (utils.errorMessage!=null) {
-                                    tv_error_text.setVisibility(View.VISIBLE);
-                                    utils.errorMessage=null;
-                                }
-                                else {
-                                    siMode = true;
-                                    tv_error_text.setVisibility(View.GONE);
-                                }
-                            }
+                            ((PayUBaseActivity) getActivity()).getBinInfo(cardNumberEditText.getText().toString());
                     }
                     if (issuer != null && issuer.length() > 1 ) {
                         image = getIssuerImage(issuer);
@@ -577,9 +557,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         }
         else {
             if(viewpager.getCurrentItem() == fragmentPosition)
-            getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
-        }
-        if (mPaymentParams.getSiParams()!=null && siMode==false){
             getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
         }
 

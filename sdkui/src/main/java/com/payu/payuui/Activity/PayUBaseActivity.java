@@ -39,6 +39,7 @@ import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
 //import com.payu.india.PostParams.PaymentPostParams;
+import com.payu.india.Tasks.BinInfoTask;
 import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 import com.payu.india.Tasks.ValueAddedServiceTask;
 import com.payu.paymentparamhelper.PaymentParams;
@@ -51,20 +52,13 @@ import com.payu.payuui.Fragment.CreditDebitFragment;
 import com.payu.payuui.Fragment.SavedCardItemFragment;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
-import com.payu.payuui.SdkuiUtil.Utils;
 import com.payu.payuui.Widget.SwipeTab.SlidingTabLayout;
-import com.payu.phonepe.PhonePe;
-import com.payu.samsungpay.PayUSUPIPostData;
 import com.payu.samsungpay.PayUSamsungPay;
-import com.payu.samsungpay.PayUSamsungPayCallback;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.R.attr.description;
-import static android.R.attr.key;
 
 /**
  * This activity is where you get the payment options.
@@ -79,7 +73,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private String merchantKey;
     private String userCredentials;
     private PayuHashes mPayUHashes;
-    private PayuResponse mPayuResponse;
+    public PayuResponse mPayuResponse;
     private PayuUtils mPayuUtils;
     private PayuResponse valueAddedResponse;
     private PayuResponse binInfoResponse;
@@ -100,6 +94,12 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private ProgressBar mProgressBar;
     private boolean isSamsungPaySupported = false;
     private boolean isPhonePeSupported = false;
+    public String cardbin;
+
+    private SIParams siParams;
+    private String salt;
+    public Boolean isSiSupported= null;
+    public String errorMessage = null;
    // private  boolean isPaymentByPhonePe = false;
 
 
@@ -127,6 +127,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             mPayUHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
             merchantKey = mPaymentParams.getKey();
             userCredentials = mPaymentParams.getUserCredentials();
+            siParams = mPaymentParams.getSiParams();
 
 
          // Call back method of PayU custom browser to check availability of Samsung Pay
@@ -232,7 +233,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 //Enable the pay button for all other options
                 payNowButton.setEnabled(true);
             }
-            setupViewPagerAdapter(mPayuResponse, valueAddedResponse);
+            setupViewPagerAdapter(mPayuResponse, valueAddedResponse,binInfoResponse);
         }
     }
 
@@ -244,7 +245,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         boolean lazypay = mPayuResponse.isLazyPayAvailable();
 
         if (valueAddedResponse != null)
-            setupViewPagerAdapter(mPayuResponse, valueAddedResponse);
+            setupViewPagerAdapter(mPayuResponse, valueAddedResponse,binInfoResponse);
 
         MerchantWebService valueAddedWebService = new MerchantWebService();
         valueAddedWebService.setKey(mPaymentParams.getKey());
@@ -264,19 +265,13 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         }
     }
 
-    @Override
-    public void onBinInfoApiResponse(PayuResponse payuResponse){
-        binInfoResponse = payuResponse;
-    }
-
-
     /**
      * This method sets us the view pager with payment options.
      *
      * @param payuResponse       contains the payment options available on the merchant key
      * @param valueAddedResponse contains the bank down status for various banks
      */
-    private void setupViewPagerAdapter(final PayuResponse payuResponse, PayuResponse valueAddedResponse) {
+    private void setupViewPagerAdapter(final PayuResponse payuResponse, PayuResponse valueAddedResponse,PayuResponse binInfoResponse) {
 
         if (payuResponse.isResponseAvailable() && payuResponse.getResponseStatus().getCode() == PayuErrors.NO_ERROR) { // ok we are good to go
             Toast.makeText(this, payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
@@ -381,7 +376,8 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                                 break;
                             }
 
-
+                           //   cardbin=  savedCards.get(currentPosition).getCardBin();
+                          //  utils.getBinInfo(PayUBaseActivity.this,payuConfig,mPaymentParams,cardbin);
                                 if (savedCards.get(currentPosition).getCardType().equals("SMAE")) {
                                 payNowButton.setEnabled(true);
                             } else {
@@ -442,6 +438,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             if (paymentOptionsList != null && paymentOptionsList.size() > 0) {
                 switch (paymentOptionsList.get(viewPager.getCurrentItem())) {
                     case SdkUIConstants.SAVED_CARDS:
+                   //     setBinInfoResponse();
                         makePaymentByStoredCard();
                         break;
                     case SdkUIConstants.CREDIT_DEBIT_CARDS:
@@ -694,9 +691,6 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         SavedCardItemFragmentAdapter mSaveAdapter = (SavedCardItemFragmentAdapter) viewPager.getAdapter();
         SavedCardItemFragment mSaveFragment = mSaveAdapter.getFragment(viewPager.getCurrentItem()) instanceof SavedCardItemFragment ? mSaveAdapter.getFragment(viewPager.getCurrentItem()) : null;
         String cvv = mSaveFragment !=null ? mSaveFragment.getCvv() : null;
-        String cardbin = selectedStoredCard.getCardBin();
-        Utils utils = new Utils();
-        utils.getBinInfo(this,payuConfig,mPaymentParams,cardbin);
         // lets try to get the post params
         selectedStoredCard.setCvv(cvv); // make sure that you set the cvv also
 
@@ -707,7 +701,6 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         mPaymentParams.setExpiryMonth(selectedStoredCard.getExpiryMonth());
         mPaymentParams.setExpiryYear(selectedStoredCard.getExpiryYear());
         mPaymentParams.setCvv(cvv);
-
         if (mPaymentParams.getSiParams()!=null){
             String siHash = bundle.getString(SdkUIConstants.SI_HASH);
             if (siHash!=null && siHash.isEmpty()==false){
@@ -715,12 +708,11 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             }
         }
 
-
-        try {
-            mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+              try {
+                  mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.CC).getPaymentPostParams();
+              } catch (Exception e) {
+                  e.printStackTrace();
+              }
     }
 
 //    private void makePaymentBySamPay() {
@@ -807,5 +799,56 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    public void getBinInfo(String cardbin) {
+        MerchantWebService merchantWebService = new MerchantWebService();
+        merchantWebService.setKey(mPaymentParams.getKey());
+        merchantWebService.setCommand(PayuConstants.GET_BIN_INFO);
+        merchantWebService.setVar1("1");
+        if (siParams!=null) merchantWebService.setVar5("1");
+        merchantWebService.setVar2(cardbin.replace(" ", ""));
+        salt = bundle.getString(PayuConstants.SALT);
 
+        merchantWebService.setHash(calculateHash("" + mPaymentParams.getKey() + "|" + PayuConstants.GET_BIN_INFO + "|" + 1 + "|" +salt));
+
+        com.payu.india.Model.PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            payuConfig.setData(postData.getResult());
+
+            BinInfoTask binInfoTask = new BinInfoTask(this);
+            binInfoTask.execute(payuConfig);
+        }
+    }
+    public static String calculateHash(String hashString) {
+        try {
+            StringBuilder hash = new StringBuilder();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(hashString.getBytes());
+            byte[] mdbytes = messageDigest.digest();
+            for (byte hashByte : mdbytes) {
+                hash.append(Integer.toString((hashByte & 0xff) + 0x100, 16).substring(1));
+            }
+            return hash.toString();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+
+    @Override
+    public void onBinInfoApiResponse(PayuResponse payuResponse) {
+        if ( payuResponse.getCardInformation() != null && siParams!=null) {
+            binInfoResponse = payuResponse;
+            siParams.setCcCardType(getCardType(payuResponse.getCardInformation().getCardType()));
+            siParams.setCcCategory(payuResponse.getCardInformation().getCardCategory());
+            isSiSupported = payuResponse.getCardInformation().getIsSiSupported();
+            if (isSiSupported){
+                payNowButton.setEnabled(true);
+            }else payNowButton.setEnabled(false);
+        }
+    }
+    private String getCardType(String cardType)  {
+        if(cardType.equalsIgnoreCase("CC"))
+            return  "CC";
+        else return "DC";
+    }
 }
