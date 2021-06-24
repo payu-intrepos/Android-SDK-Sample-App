@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.payu.india.Model.StoredCard;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuUtils;
+import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 
@@ -75,9 +76,7 @@ public final class SavedCardItemFragment extends Fragment {
         cvvEditText = (EditText) view.findViewById(R.id.edit_text_cvv);
         enableOneClickPayment = (CheckBox) view.findViewById(R.id.check_box_save_card_enable_one_click_payment);
         cvvTextView = (TextView) view.findViewById(R.id.cvv_text_view);
-
 //        saveCvvLinearlayout = (LinearLayout) view.findViewById(R.id.layout_save_cvv_checkbox);
-
         if (mStoredCard.getCardBrand().equals("AMEX")) {
             cvvEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(4)});
         }
@@ -102,14 +101,13 @@ public final class SavedCardItemFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 String cvv = s.toString();
-
                 ViewPager activityViewPager = (ViewPager) getActivity().findViewById(R.id.pager);
 
                 if (position == mViewPager.getCurrentItem() && activityViewPager.getCurrentItem() == 0) {// hardcoded 0, try to remove it
                     if ((mPayuUtils.validateCvv(mStoredCard.getCardBin(), cvv) && !cvv.equals("")) || cvvEditText.getVisibility() == View.GONE) {
                         getActivity().findViewById(R.id.button_pay_now).setEnabled(true);
+                        ((PayUBaseActivity) getActivity()).getBinInfo(mStoredCard.getCardBin());
                         isCvvValid = true;
-
                     } else {
 
                         getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
@@ -136,7 +134,6 @@ public final class SavedCardItemFragment extends Fragment {
         } else {
             issuingBankDownText.setVisibility(View.GONE);
         }
-
 
         return view;
     }

@@ -31,6 +31,7 @@ import com.payu.india.PostParams.MerchantWebServicePostParams;
 import com.payu.india.Tasks.DeleteCardTask;
 import com.payu.paymentparamhelper.PaymentParams;
 import com.payu.paymentparamhelper.PostData;
+import com.payu.paymentparamhelper.siparams.SIParams;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.Adapter.PagerAdapter;
 import com.payu.payuui.Adapter.SavedCardItemFragmentAdapter;
@@ -64,6 +65,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
     private HashMap<String, CardStatus> valueAddedHashMap;
     private PayuUtils payuUtils;
     private HashMap<String, String> oneClickCardTokens;
+    private SIParams siParams;
 
 
     public SavedCardsFragment() {
@@ -111,6 +113,7 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
 
 
 
+
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
 
         indicator = (CirclePageIndicator)mView.findViewById(R.id.indicator);
@@ -147,6 +150,9 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
                         } else {
                             getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
                         }
+                            if (mPaymentParams.getSiParams()!=null){
+                                getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
+                            }
                     }
                 }
 

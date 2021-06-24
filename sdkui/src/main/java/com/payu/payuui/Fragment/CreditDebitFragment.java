@@ -83,9 +83,12 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
     private LinearLayout mLinearLayout;
     private TextView amountText;
     private TextView issuingBankDown;
+    private TextView tv_consent_text;
+    private TextView tv_error_text;
     private ViewPager viewpager;
     private int fragmentPosition;
     private View view;
+
 
     public CreditDebitFragment() {
         // Required empty public constructor
@@ -109,7 +112,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
 
         viewpager = (ViewPager) getActivity().findViewById(R.id.pager);
 
-
         nameOnCardEditText = (EditText) view.findViewById(R.id.edit_text_name_on_card);
         cardNumberEditText = (EditText) view.findViewById(R.id.edit_text_card_number);
         cardCvvEditText = (EditText) view.findViewById(R.id.edit_text_card_cvv);
@@ -122,7 +124,8 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
         cvvImage = (ImageView) view.findViewById(R.id.image_cvv);
         mLinearLayout = (LinearLayout) view.findViewById(R.id.layout_expiry_date);
         issuingBankDown = (TextView) view.findViewById(R.id.text_view_issuing_bank_down_error);
-
+        tv_consent_text = view.findViewById(R.id.tv_consent_text);
+        tv_error_text = view.findViewById(R.id.tv_error_text);
         amountText = (TextView) getActivity().findViewById(R.id.textview_amount);
 
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -248,6 +251,11 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             saveCardCheckBox.setVisibility(View.VISIBLE);
         }
 
+        if (mPaymentParams.getSiParams()!=null){
+            tv_consent_text.setVisibility(View.VISIBLE);
+        }else {
+            tv_consent_text.setVisibility(View.GONE);
+        }
 
 
         payuUtils = new PayuUtils();
@@ -275,6 +283,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                 if (charSequence.length() > 6) { // to confirm rupay card we need min 6 digit.
                     if (null == issuer){
                         issuer = payuUtils.getIssuer(charSequence.toString().replace(" ",""));
+                            ((PayUBaseActivity) getActivity()).getBinInfo(cardNumberEditText.getText().toString());
                     }
                     if (issuer != null && issuer.length() > 1 ) {
                         image = getIssuerImage(issuer);
@@ -372,7 +381,6 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
                     if(viewpager.getCurrentItem() == fragmentPosition)
                         getActivity().findViewById(R.id.button_pay_now).setEnabled(false);
                 }
-
 
             }
 
@@ -484,9 +492,9 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
     }
 
     public void cardValidation(){
-
         if (!(payuUtils.validateCardNumber(cardNumberEditText.getText().toString().replace(" ", ""))) && cardNumberEditText.length() > 0 ) {
             cardImage.setImageResource(R.drawable.error_icon);
+
             isCardNumberValid = false;
             amountText.setText(SdkUIConstants.AMOUNT + ": " + mPaymentParams.getAmount());
 //            uiValidation();
@@ -495,6 +503,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             isCardNumberValid = true;
             if(mPaymentParams.getOfferKey() != null && null != mPaymentParams.getUserCredentials())
             getOfferStatus();
+          //  getBinInfo();
 //            uiValidation();
         }else{
             isCardNumberValid = false;
@@ -531,6 +540,7 @@ public class CreditDebitFragment extends Fragment implements GetOfferStatusApiLi
             Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     public void uiValidation(){
 

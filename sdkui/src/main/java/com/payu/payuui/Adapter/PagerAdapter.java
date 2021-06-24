@@ -69,6 +69,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case SdkUIConstants.NET_BANKING:
                 fragment = new NetBankingFragment();
                 bundle.putParcelableArrayList(PayuConstants.NETBANKING, payuResponse.getNetBanks());
+                bundle.putParcelableArrayList(PayuConstants.SINETBANKING,payuResponse.getSiBankList());
                 bundle.putSerializable(SdkUIConstants.VALUE_ADDED, valueAddedResponse.getNetBankingDownStatus());
                 fragment.setArguments(bundle);
                 mPageReference.put(i, fragment);
