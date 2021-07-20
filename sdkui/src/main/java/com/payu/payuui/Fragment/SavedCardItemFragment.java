@@ -74,7 +74,6 @@ public final class SavedCardItemFragment extends Fragment {
         mPayuUtils = new PayuUtils();
 
         cvvEditText = (EditText) view.findViewById(R.id.edit_text_cvv);
-        enableOneClickPayment = (CheckBox) view.findViewById(R.id.check_box_save_card_enable_one_click_payment);
         cvvTextView = (TextView) view.findViewById(R.id.cvv_text_view);
 //        saveCvvLinearlayout = (LinearLayout) view.findViewById(R.id.layout_save_cvv_checkbox);
         if (mStoredCard.getCardBrand().equals("AMEX")) {

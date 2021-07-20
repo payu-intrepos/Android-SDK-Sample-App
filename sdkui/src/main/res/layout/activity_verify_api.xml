@@ -1,0 +1,122 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_store_user_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Store User Card" />
+
+        <Button
+            android:id="@+id/button_get_user_cards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get User Cards" />
+
+        <Button
+            android:id="@+id/button_delete_user_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete User Card" />
+
+        <Button
+            android:id="@+id/button_edit_user_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Edit User Card" />
+
+        <Button
+            android:id="@+id/button_get_card_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get card Information"/>
+        
+        <Button
+            android:id="@+id/button_get_ibibo_codes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get IBIBO Codes"/>
+
+        <Button
+            android:id="@+id/button_get_value_added_services"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get Value added services"/>
+
+        <!--TODO write the response -->
+        <Button
+            android:id="@+id/button_get_transaction_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get transaction information"/>
+
+        <Button
+            android:id="@+id/button_get_offer_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get offer status"/>
+
+        <Button
+            android:id="@+id/button_verify_transaction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Verify Payment"/>
+
+        <Button
+            android:id="@+id/button_delete_cvv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete cvv"/>
+
+        <Button
+            android:id="@+id/button_check_offer_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Check offer details"/>
+
+        <Button
+            android:id="@+id/button_get_emi_as_per_interest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Get EMI Amount According To Interest"/>
+
+        <Button
+            android:id="@+id/button_eligible_bins_for_emi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Eligible Bins for EMI"/>
+        <Button
+            android:id="@+id/button_lookup_request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Lookup Api Call"/>
+    </LinearLayout>
+
+</ScrollView>
+    </RelativeLayout>

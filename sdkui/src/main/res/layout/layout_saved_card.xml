@@ -117,13 +117,13 @@
 
     </LinearLayout>
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enable_one_click_checkout"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:id="@+id/check_box_save_card_enable_one_click_payment"/>
+<!--        <CheckBox-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/enable_one_click_checkout"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:id="@+id/check_box_save_card_enable_one_click_payment"/>-->
 
     </LinearLayout>
 

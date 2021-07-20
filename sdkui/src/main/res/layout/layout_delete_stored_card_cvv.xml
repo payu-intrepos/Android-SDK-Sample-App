@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/text_view_delete_card_cvv_info_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:padding="20dp"
+            android:layout_centerHorizontal="true"
+            android:text="Select Card To Delete CVV"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/list_view_delete_stored_card_cvv"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/text_view_delete_card_cvv_info_header"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:listSelector="#FF7fc1f6"
+            android:choiceMode="singleChoice"/>
+    </RelativeLayout>
+
+</LinearLayout>

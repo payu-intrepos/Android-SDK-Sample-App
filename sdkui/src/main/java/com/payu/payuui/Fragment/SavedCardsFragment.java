@@ -254,7 +254,6 @@ public class SavedCardsFragment extends Fragment implements View.OnClickListener
             // there is no error, lets fetch te cards list.
 
             ((EditText)mView.findViewById(R.id.edit_text_cvv)).getText().clear();
-            ((CheckBox)mView.findViewById(R.id.check_box_save_card_enable_one_click_payment)).setChecked(false );
             mStoreCards.remove(mPager.getCurrentItem());
             mPager.getAdapter().notifyDataSetChanged();
             if(mStoreCards.size() == 0){

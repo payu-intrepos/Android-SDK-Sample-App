@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent" android:minWidth="300dp">
+
+    <TextView
+        android:id="@+id/txt"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:gravity="center_horizontal"
+        android:text="Enter Amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:textSize="15sp"
+        android:numeric="decimal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="e.g. 100"
+        android:id="@+id/payu_emi_input" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@+id/emi_submit_btn" />
+</LinearLayout>

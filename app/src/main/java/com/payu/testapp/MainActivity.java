@@ -34,6 +34,7 @@ import com.payu.paymentparamhelper.siparams.SIParamsDetails;
 import com.payu.paymentparamhelper.siparams.enums.BeneficiaryAccountType;
 import com.payu.paymentparamhelper.siparams.enums.BillingCycle;
 import com.payu.payuui.Activity.PayUBaseActivity;
+import com.payu.payuui.Activity.VerifyApiActivity;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 
 import org.json.JSONException;
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText paymentEndDateText;
     private SwitchCompat si;
     private LinearLayout siView;
+    private boolean verifyApiClicked;
+    private Intent intent;
 
 
     @Override
@@ -196,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void navigateToBaseActivity(View view) {
 
-
+        if(view.getId()==R.id.btnVerify)
+            verifyApiClicked = true;
         // merchantKey="";
         merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
         String amount = ((EditText) findViewById(R.id.editTextAmount)).getText().toString();
@@ -419,8 +423,11 @@ public class MainActivity extends AppCompatActivity {
      * @param payuHashes it contains all the hashes generated from merchant server
      */
     public void launchSdkUI(PayuHashes payuHashes) {
-
-        Intent intent = new Intent(this, PayUBaseActivity.class);
+        if(verifyApiClicked){
+             intent = new Intent(this, VerifyApiActivity.class);
+        }else {
+             intent = new Intent(this, PayUBaseActivity.class);
+        }
         intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
         intent.putExtra(PayuConstants.PAYMENT_PARAMS, mPaymentParams);
         intent.putExtra(SdkUIConstants.SUBVENTION_HASH, subventionHash);
