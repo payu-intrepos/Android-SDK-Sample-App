@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="primaryColor">#3F51B5</color>
+    <color name="primaryColorDark">#303F9F</color>
+    <color name="accentColor">#F44336</color>-->
+
+    <!--<color name="primaryColor">#3F51B5</color>
+    <color name="primaryColorDark">#303F9F</color>
+    <color name="accentColor">#F44336</color>-->
+
+    <!--<color name="backgroundColor">#E8E8E0</color>
+    <color name="backgroundColorPress">#DBDBD3</color>
+    <color name="red">#FF3B00</color>
+    <color name="red_press">#990000</color>
+    <color name="dark_gray">#4C535B</color>
+    <color name="dark_gray_press">#ff7e8a97</color>
+    <color name="button_gray">#cbcbcb</color>
+    <color name="blue">#FF1784C7</color>-->
+    
+    
+    <color name="darkPrimaryColor">#D32F2F</color>
+    <color name="primaryColor">#F44336</color>
+    <color name="lightPrimaryColor">#FFCDD2</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="accentColor">#FF5722</color>
+    <color name="primaryTextColor">#212121</color>
+    <color name="secondaryTextColor">#727272</color>
+    <color name="dividerColor">#B6B6B6</color>
+
+</resources>

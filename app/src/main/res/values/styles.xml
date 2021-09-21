@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="AppTheme.Base">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryColor</item>
+        <item name="colorAccent">@color/accentColor</item>
+        <item name="android:buttonStyle">@style/CustomButtonStyle</item>
+        <item name="android:listViewStyle">@style/CustomListViewStyle</item>
+        <item name="toolbarStyle">@style/CustomToolBarTheme</item>
+    </style>
+
+    <style name="CustomToolBarTheme" parent="Widget.AppCompat.Toolbar">
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:background">@color/primaryColor</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat</item>
+    </style>
+
+
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">#FF1784C7</item>
+        <!--<item name="colorButtonNormal">#2196f3</item>-->
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="CustomListViewStyle" parent="Widget.AppCompat.ListView">
+        <item name="android:listSelector">#003366</item>
+    </style>
+
+</resources>
