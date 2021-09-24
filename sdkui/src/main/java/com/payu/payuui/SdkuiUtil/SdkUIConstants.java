@@ -15,6 +15,9 @@ public interface SdkUIConstants {
     String PHONEPE = "PHONEPE";
     String CBPHONEPE = "CBPHONEPE";
     String CASH_CARDS = "Cash Cards";
+    String ZESTMONEY = "Zestmoney";
+    String ZESTMON = "ZESTMON";
+    String CARDLESS = "cardless";
     String EMI = "EMI";
     String PAYU_MONEY = "PayU Money";
     String AMOUNT = "Amount";

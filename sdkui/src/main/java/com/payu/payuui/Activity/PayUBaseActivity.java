@@ -3,8 +3,6 @@ package com.payu.payuui.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,27 +16,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.payu.custombrowser.CustomBrowser;
 import com.payu.custombrowser.PayUCustomBrowserCallback;
 import com.payu.custombrowser.bean.CustomBrowserResultData;
 import com.payu.custombrowser.util.PaymentOption;
+import com.payu.india.Interfaces.BinInfoApiListener;
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
 import com.payu.india.Interfaces.ValueAddedServiceApiListener;
-import com.payu.india.Interfaces.BinInfoApiListener;
 import com.payu.india.Model.Emi;
 import com.payu.india.Model.MerchantWebService;
 import com.payu.india.Model.PaymentDetails;
-//import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
 import com.payu.india.Model.PayuResponse;
-//import com.payu.india.Model.PostData;
 import com.payu.india.Model.StoredCard;
 import com.payu.india.Payu.PayuConstants;
 import com.payu.india.Payu.PayuErrors;
 import com.payu.india.Payu.PayuUtils;
 import com.payu.india.PostParams.MerchantWebServicePostParams;
-//import com.payu.india.PostParams.PaymentPostParams;
 import com.payu.india.Tasks.BinInfoTask;
 import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 import com.payu.india.Tasks.ValueAddedServiceTask;
@@ -113,10 +111,6 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
 
         bundle = getIntent().getExtras();
 
-
-
-
-
         if (bundle != null) {
             payuConfig = bundle.getParcelable(PayuConstants.PAYU_CONFIG);
             payuConfig = null != payuConfig ? payuConfig : new PayuConfig();
@@ -125,6 +119,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
 
             mPaymentParams = bundle.getParcelable(PayuConstants.PAYMENT_PARAMS);
             mPayUHashes = bundle.getParcelable(PayuConstants.PAYU_HASHES);
+            salt = bundle.getString(PayuConstants.SALT);
             merchantKey = mPaymentParams.getKey();
             userCredentials = mPaymentParams.getUserCredentials();
             siParams = mPaymentParams.getSiParams();
@@ -331,14 +326,18 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             if (isPhonePeSupported) {
                 paymentOptionsList.add(SdkUIConstants.PHONEPE);
             }
-            }
 
+            paymentOptionsList.add(SdkUIConstants.ZESTMONEY);
+        }
 
             else {
             Toast.makeText(this, "Something went wrong : " + payuResponse.getResponseStatus().getResult(), Toast.LENGTH_LONG).show();
         }
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), paymentOptionsList, payuResponse, valueAddedResponse);
+        //DO NOT KEEP SALT ON CLIENT SIDE. Always keep it on Server Side
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), paymentOptionsList, payuResponse, valueAddedResponse,salt);
+        pagerAdapter.setPayuConfig(payuConfig);
+        pagerAdapter.setPaymentParams(mPaymentParams);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(pagerAdapter);
@@ -411,6 +410,13 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                         payNowButton.setEnabled(true);
                         hideKeyboard();
                         break;
+                    case SdkUIConstants.ZESTMONEY:
+                        payNowButton.setEnabled(false);
+                        hide_keyboard();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + paymentOptionsList.get(position));
+
                 }
 
             }
@@ -423,6 +429,17 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
 
         mProgressBar.setVisibility(View.GONE);
 
+    }
+
+    public void hide_keyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = this.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if(view == null) {
+            view = new View(this);
+        }
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -480,6 +497,9 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                     case SdkUIConstants.PHONEPE:
                         makePaymentByPhonePe();
                         break;
+                    case SdkUIConstants.ZESTMONEY:
+                        makePaymentByZestmoney();
+                        break;
                 }
             }
 
@@ -533,6 +553,24 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             e.printStackTrace();
         }
 
+    }
+
+    private void makePaymentByZestmoney() {
+        try {
+            EditText etMobileNumberZestmoney = findViewById(R.id.etZestmoneyMobileNumber);
+            if (etMobileNumberZestmoney != null) {
+                mPaymentParams.setPhone(etMobileNumberZestmoney.getText().toString().trim());
+                mPaymentParams.setBankCode(SdkUIConstants.ZESTMON);
+                mPaymentParams.setCardlessEMI(true);
+                try {
+                    mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.EMI).getPaymentPostParams();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -806,7 +844,6 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
         merchantWebService.setVar1("1");
         if (siParams!=null) merchantWebService.setVar5("1");
         merchantWebService.setVar2(cardbin.replace(" ", ""));
-        salt = bundle.getString(PayuConstants.SALT);
 
         merchantWebService.setHash(calculateHash("" + mPaymentParams.getKey() + "|" + PayuConstants.GET_BIN_INFO + "|" + 1 + "|" +salt));
 

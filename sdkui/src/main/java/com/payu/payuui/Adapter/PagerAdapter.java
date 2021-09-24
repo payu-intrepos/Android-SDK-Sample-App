@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuResponse;
 import com.payu.india.Payu.PayuConstants;
+import com.payu.paymentparamhelper.PaymentParams;
 import com.payu.payuui.Fragment.CashCardFragment;
 import com.payu.payuui.Fragment.CreditDebitFragment;
 import com.payu.payuui.Fragment.EmiFragment;
@@ -20,6 +22,7 @@ import com.payu.payuui.Fragment.SavedCardsFragment;
 import com.payu.payuui.Fragment.StandAlonePhonePeFragment;
 import com.payu.payuui.Fragment.TEZFragment;
 import com.payu.payuui.Fragment.UPIFragment;
+import com.payu.payuui.Fragment.ZestmoneyFragment;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 
 import java.util.ArrayList;
@@ -34,12 +37,24 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     private PayuResponse payuResponse;
     private PayuResponse valueAddedResponse;
     private HashMap<Integer, Fragment> mPageReference = new HashMap<Integer, Fragment>();
+    private PaymentParams paymentParams;
+    private PayuConfig payuConfig = null;
+    private String salt;
 
-    public PagerAdapter(FragmentManager fragmentManager, ArrayList<String> titles, PayuResponse payuResponse, PayuResponse valueAddedResponse) {
+    public PagerAdapter(FragmentManager fragmentManager, ArrayList<String> titles, PayuResponse payuResponse, PayuResponse valueAddedResponse, String salt) {
         super(fragmentManager);
         this.mTitles = titles;
         this.payuResponse = payuResponse;
         this.valueAddedResponse = valueAddedResponse;
+        this.salt = salt;
+    }
+
+    public void setPaymentParams(PaymentParams paymentParams) {
+        this.paymentParams = paymentParams;
+    }
+
+    public void setPayuConfig(PayuConfig payuConfig){
+        this.payuConfig = payuConfig;
     }
 
     @Override
@@ -132,6 +147,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                 mPageReference.put(i,fragment);
                 return fragment;
 
+            case SdkUIConstants.ZESTMONEY:
+                fragment = new ZestmoneyFragment();
+                bundle.putParcelable(PayuConstants.KEY, paymentParams);
+                bundle.putParcelable(PayuConstants.PAYU_CONFIG, payuConfig);
+                bundle.putString(PayuConstants.SALT, salt);
+                fragment.setArguments(bundle);
+                return fragment;
 
 
             default:
