@@ -32,6 +32,8 @@ import com.payu.paymentparamhelper.siparams.SIParams;
 import com.payu.paymentparamhelper.siparams.SIParamsDetails;
 import com.payu.paymentparamhelper.siparams.enums.BeneficiaryAccountType;
 import com.payu.paymentparamhelper.siparams.enums.BillingCycle;
+import com.payu.paymentparamhelper.siparams.enums.BillingLimit;
+import com.payu.paymentparamhelper.siparams.enums.BillingRule;
 import com.payu.payuui.Activity.PayUBaseActivity;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 
@@ -64,10 +66,12 @@ public class MainActivity extends AppCompatActivity {
     String salt = null;
     //params for si
     private Boolean isFreeTrial = false;
-    private BillingCycle billingCycle = null;
+    private BillingCycle billingCycle = BillingCycle.ONCE;
     private int billingInterval = 1;
     private String billingamount = "1";
     private String billingCurrency = "INR";
+    private BillingLimit billingLimit = BillingLimit.ON;
+    private BillingRule billingRule = BillingRule.EXACT;
     private String paymentStartDate ="2021-12-24";
     private String paymentEndDate = "2022-12-24";
     private String remarks = " ";
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
       paymentEndDateText = findViewById(R.id.et_paymentEndDate_value);
       si = findViewById(R.id.switch_si_on_off);
       siView = findViewById(R.id.siView);
+      siView.setVisibility(View.GONE);
         //Lets setup the environment spinner
         environmentSpinner = (Spinner) findViewById(R.id.spinner_environment);
         //  List<String> list = new ArrayList<String>();
@@ -223,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
         mPaymentParams.setKey(merchantKey);
         mPaymentParams.setAmount(amount);
         mPaymentParams.setProductInfo("product_info");
-        mPaymentParams.setFirstName("AnkitTEST");
-        mPaymentParams.setEmail("ankitmonani@colive.com");
+        mPaymentParams.setFirstName("TEST");
+        mPaymentParams.setEmail("xyz@gmail.com");
         mPaymentParams.setPhone("");
         if (siShow) {
             mPaymentParams.setSiParams(setSiDeatils());
@@ -246,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
          * Furl --> Failre url is where the transaction response is posted by PayU on failed transaction
          */
        // mPaymentParams.setSurl(" https://www.fitternity.com/paymentsuccessandroid");
-        mPaymentParams.setSurl("https://payu.herokuapp.com/success");
-        mPaymentParams.setFurl("https://payu.herokuapp.com/failure");
+        mPaymentParams.setSurl("https://payuresponse.firebaseapp.com/success");
+        mPaymentParams.setFurl("https://payuresponse.firebaseapp.com/failure");
       //  mPaymentParams.setFurl("https://www.fitternity.com/paymentsuccessandroid");
         mPaymentParams.setNotifyURL(mPaymentParams.getSurl());  //for lazy pay
 
@@ -451,6 +456,8 @@ public class MainActivity extends AppCompatActivity {
     beneficiaryDetails.setBeneficiaryAccountType(beneficiaryAccountType);
     siParams.setBeneficiarydetail(beneficiaryDetails);
     SIParamsDetails siParamsDetails = new SIParamsDetails();
+    siParamsDetails.setBillingLimit(billingLimit);
+    siParamsDetails.setBillingRule(billingRule);
     siParamsDetails.setBillingAmount(billingamount);
     siParamsDetails.setBillingCurrency(billingCurrency);
     siParamsDetails.setBillingCycle(billingCycle);
@@ -470,6 +477,8 @@ public class MainActivity extends AppCompatActivity {
            siObject.put("billingInterval",billingInterval);
            siObject.put("paymentStartDate",paymentStartDate);
            siObject.put("paymentEndDate",paymentEndDate);
+           siObject.put("billingLimit",billingLimit);
+           siObject.put("billingRule",billingRule);
        } catch (JSONException e) {
            e.printStackTrace();
        }

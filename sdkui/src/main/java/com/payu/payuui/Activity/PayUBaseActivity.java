@@ -285,9 +285,9 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 paymentOptionsList.add(SdkUIConstants.NET_BANKING);
             }
 
-            if(payuResponse.isEmiAvailable()){
+/*            if(payuResponse.isEmiAvailable()){
                 paymentOptionsList.add(SdkUIConstants.EMI);
-            }
+            }*/
 
             if(payuResponse.isCashCardAvailable()){
                 paymentOptionsList.add(SdkUIConstants.CASH_CARDS);
