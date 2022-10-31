@@ -81,12 +81,15 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean siShow = false;
     private String siHash;
+    private String tpvHash;
     private Spinner billingCycleSpinner;
     private SwitchCompat freeTrial;
     private EditText billingamountText ;
     private EditText billingIntervalText;
     private EditText paymentStartDateText;
     private EditText paymentEndDateText;
+    private EditText beneficiaryAccount;
+    private EditText ifsc;
     private SwitchCompat si;
     private LinearLayout siView;
 
@@ -119,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
       billingamountText = findViewById(R.id.et_billingAmount_value);
       paymentStartDateText = findViewById(R.id.et_paymentStartDate_value);
       paymentEndDateText = findViewById(R.id.et_paymentEndDate_value);
+        beneficiaryAccount = findViewById(R.id.editTextBAccountNo);
+        ifsc = findViewById(R.id.editTextIFSC);
       si = findViewById(R.id.switch_si_on_off);
       siView = findViewById(R.id.siView);
       siView.setVisibility(View.GONE);
@@ -203,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
         merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
         String amount = ((EditText) findViewById(R.id.editTextAmount)).getText().toString();
         String email = ((EditText) findViewById(R.id.editTextEmail)).getText().toString();
+        beneficiaryAccountNumber = beneficiaryAccount.getText().toString();
+        String ifscNo = ifsc.getText().toString();
 
         String value = environmentSpinner.getSelectedItem().toString();
         int environment;
@@ -231,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
         mPaymentParams.setFirstName("TEST");
         mPaymentParams.setEmail("xyz@gmail.com");
         mPaymentParams.setPhone("");
+        mPaymentParams.setBeneficiaryAccountNumber(beneficiaryAccountNumber);
+        mPaymentParams.setIfscCode(ifscNo);
         if (siShow) {
             mPaymentParams.setSiParams(setSiDeatils());
         }
@@ -328,6 +337,10 @@ public class MainActivity extends AppCompatActivity {
         checksum.setUdf3(mPaymentParams.getUdf3());
         checksum.setUdf4(mPaymentParams.getUdf4());
         checksum.setUdf5(mPaymentParams.getUdf5());
+        StringBuilder beneficiarydetail = new StringBuilder();
+        beneficiarydetail.append("{"+"\""+PayuConstants.BENEFICIARY_ACCOUNT_NUMBER+"\""+":"+"\""+mPaymentParams.getBeneficiaryAccountNumber()+"\"");
+        beneficiarydetail.append(","+"\""+PayuConstants.IFSC_CODE+"\""+":"+"\""+mPaymentParams.getIfscCode()+"\"");
+        beneficiarydetail.append("}");
 
         postData = checksum.getHash();
         if (postData.getCode() == PayuErrors.NO_ERROR) {
@@ -340,7 +353,10 @@ public class MainActivity extends AppCompatActivity {
         if (mPaymentParams.getSiParams()!=null){
             siHash = calculateHash(""+mPaymentParams.getKey()+"|"+mPaymentParams.getTxnId()+"|"+mPaymentParams.getAmount()+"|"+mPaymentParams.getProductInfo()+"|"+mPaymentParams.getFirstName()+"|"+mPaymentParams.getEmail()+"|"+mPaymentParams.getUdf1()+"|"+mPaymentParams.getUdf2()+"|"+mPaymentParams.getUdf3()+"|"+mPaymentParams.getUdf4()+"|"+mPaymentParams.getUdf5()+"||||||"+prepareSiDetails()+"|"+salt);
         }
+        if (beneficiarydetail!=null && beneficiarydetail.length()!=0 ){
+            tpvHash  = calculateHash(""+mPaymentParams.getKey()+"|"+mPaymentParams.getTxnId()+"|"+mPaymentParams.getAmount()+"|"+mPaymentParams.getProductInfo()+"|"+mPaymentParams.getFirstName()+"|"+mPaymentParams.getEmail()+"|"+mPaymentParams.getUdf1()+"|"+mPaymentParams.getUdf2()+"|"+mPaymentParams.getUdf3()+"|"+mPaymentParams.getUdf4()+"|"+mPaymentParams.getUdf5()+"||||||"+beneficiarydetail.toString()+"|"+salt);
 
+        }
         /*}
 
         else {
@@ -420,8 +436,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(PayuConstants.PAYMENT_PARAMS, mPaymentParams);
         intent.putExtra(SdkUIConstants.SUBVENTION_HASH, subventionHash);
         intent.putExtra(SdkUIConstants.SI_HASH,siHash);
+        intent.putExtra(SdkUIConstants.TPV_HASH,tpvHash);
         intent.putExtra(PayuConstants.SALT,salt);
         intent.putExtra(PayuConstants.PAYU_HASHES, payuHashes);
+
         startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
     }
 

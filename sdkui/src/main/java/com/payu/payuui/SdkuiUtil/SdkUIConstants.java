@@ -32,4 +32,5 @@ public interface SdkUIConstants {
     String DEBIT_CARDS = "Debit Cards";
     String SUBVENTION_HASH = "subventionHash";
     String SI_HASH = "siHash";
+    String TPV_HASH = "tpvHash";
 }

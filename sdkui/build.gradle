@@ -19,12 +19,12 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'in.payu:payu-sdk:5.3.7'
-    implementation 'in.payu:payu-custom-browser:7.9.0'
-    implementation 'com.payu.samsungpay:samsungpay:1.0'
+    api 'in.payu:payu-sdk:5.5.0'
+    implementation 'in.payu:payu-custom-browser:7.10.6'
+//    implementation 'com.payu.samsungpay:samsungpay:1.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'in.payu:phonepe-intent:1.6.1'
-    implementation 'in.payu:payu-gpay:1.4.0'
-    implementation 'in.payu:upisdk:1.5.3'
+    implementation 'in.payu:payu-gpay:1.4.2'
+    implementation 'in.payu:upisdk:1.5.5'
 }

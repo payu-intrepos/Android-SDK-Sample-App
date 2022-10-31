@@ -51,7 +51,7 @@ import com.payu.payuui.Fragment.SavedCardItemFragment;
 import com.payu.payuui.R;
 import com.payu.payuui.SdkuiUtil.SdkUIConstants;
 import com.payu.payuui.Widget.SwipeTab.SlidingTabLayout;
-import com.payu.samsungpay.PayUSamsungPay;
+//import com.payu.samsungpay.PayUSamsungPay;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
     private ArrayList<StoredCard> savedCards;
 
     private PostData mPostData;
-    private PayUSamsungPay payUSamsungPay;
+//    private PayUSamsungPay payUSamsungPay;
     private ProgressBar mProgressBar;
     private boolean isSamsungPaySupported = false;
     private boolean isPhonePeSupported = false;
@@ -539,6 +539,10 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
 
     private void makePaymentByGenericIntent(){
         try {
+            String tpvHash = bundle.getString(SdkUIConstants.TPV_HASH);
+            if (mPaymentParams.getBeneficiaryAccountNumber()!=null && !mPaymentParams.getBeneficiaryAccountNumber().isEmpty()){
+                mPaymentParams.setHash(tpvHash);
+            }
             mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.UPI_INTENT).getPaymentPostParams();
         } catch (Exception e) {
             e.printStackTrace();
@@ -561,7 +565,7 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
             if (etMobileNumberZestmoney != null) {
                 mPaymentParams.setPhone(etMobileNumberZestmoney.getText().toString().trim());
                 mPaymentParams.setBankCode(SdkUIConstants.ZESTMON);
-                mPaymentParams.setCardlessEMI(true);
+//                mPaymentParams.setCardlessEMI(true);
                 try {
                     mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.EMI).getPaymentPostParams();
                 } catch (Exception e) {
@@ -800,6 +804,10 @@ public class PayUBaseActivity extends FragmentActivity implements PaymentRelated
                 if (matcher.matches()) {
                     mPaymentParams.setVpa(userVirtualAddress);
                     try {
+                        String tpvHash = bundle.getString(SdkUIConstants.TPV_HASH);
+                        if (mPaymentParams.getBeneficiaryAccountNumber()!=null && !mPaymentParams.getBeneficiaryAccountNumber().isEmpty()){
+                            mPaymentParams.setHash(tpvHash);
+                        }
                         mPostData = new PaymentPostParams(mPaymentParams, PayuConstants.UPI).getPaymentPostParams();
                     } catch (Exception e) {
                         e.printStackTrace();
