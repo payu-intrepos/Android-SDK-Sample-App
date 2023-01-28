@@ -4,7 +4,21 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Android-SDK-Sample-App.iml" filepath="$PROJECT_DIR$/Android-SDK-Sample-App.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android-SDK-Sample-App.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.iml" filepath="$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.main.iml" filepath="$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/custom-browser-source/Android-SDK-Sample-App.custom-browser-source.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.iml" filepath="$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.main.iml" filepath="$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/sdkui/Android-SDK-Sample-App.sdkui.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.iml" filepath="$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.main.iml" filepath="$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/upi-sdk-android/Android-SDK-Sample-App.upi-sdk-android.unitTest.iml" />
     </modules>
   </component>
 </project>

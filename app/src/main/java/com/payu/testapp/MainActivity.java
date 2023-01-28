@@ -49,7 +49,7 @@ import java.security.MessageDigest;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private String merchantKey, userCredentials;
+    private String merchantKey, userCredentials, merchantSalt;
 
     // These will hold all the payment parameters
     private PaymentParams mPaymentParams;
@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     private String remarks = " ";
     private String beneficiaryName = "Puspendra";
     private String beneficiaryAccountNumber = "900000000000000";
+
+    private  String phoneNumber = "999999999";
+
     private BeneficiaryAccountType beneficiaryAccountType = BeneficiaryAccountType.SAVINGS;
 
     private Boolean siShow = false;
@@ -89,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText paymentStartDateText;
     private EditText paymentEndDateText;
     private EditText beneficiaryAccount;
+
+    private EditText editTextPhoneNo;
     private EditText ifsc;
     private SwitchCompat si;
     private LinearLayout siView;
@@ -123,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
       paymentStartDateText = findViewById(R.id.et_paymentStartDate_value);
       paymentEndDateText = findViewById(R.id.et_paymentEndDate_value);
         beneficiaryAccount = findViewById(R.id.editTextBAccountNo);
+        editTextPhoneNo = findViewById(R.id.editTextPhoneNo);
         ifsc = findViewById(R.id.editTextIFSC);
       si = findViewById(R.id.switch_si_on_off);
       siView = findViewById(R.id.siView);
@@ -206,9 +212,11 @@ public class MainActivity extends AppCompatActivity {
 
         // merchantKey="";
         merchantKey = ((EditText) findViewById(R.id.editTextMerchantKey)).getText().toString();
+        merchantSalt = ((EditText) findViewById(R.id.editTextMerchantSalt)).getText().toString();
         String amount = ((EditText) findViewById(R.id.editTextAmount)).getText().toString();
         String email = ((EditText) findViewById(R.id.editTextEmail)).getText().toString();
         beneficiaryAccountNumber = beneficiaryAccount.getText().toString();
+        phoneNumber = editTextPhoneNo.getText().toString();
         String ifscNo = ifsc.getText().toString();
 
         String value = environmentSpinner.getSelectedItem().toString();
@@ -237,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
         mPaymentParams.setProductInfo("product_info");
         mPaymentParams.setFirstName("TEST");
         mPaymentParams.setEmail("xyz@gmail.com");
-        mPaymentParams.setPhone("");
+        mPaymentParams.setPhone(phoneNumber);
         mPaymentParams.setBeneficiaryAccountNumber(beneficiaryAccountNumber);
         mPaymentParams.setIfscCode(ifscNo);
         if (siShow) {
@@ -299,10 +307,10 @@ public class MainActivity extends AppCompatActivity {
          * */
         if(environment== PayuConstants.STAGING_ENV){
           //  salt = " ";
-            salt = "<Please_add_salt_here>";
+            salt = merchantSalt;
         }else {
             //Production Env
-            salt = "<Please_add_salt_here>";
+            salt = merchantSalt;
           
         }
         generateHashFromSDK(mPaymentParams, salt);

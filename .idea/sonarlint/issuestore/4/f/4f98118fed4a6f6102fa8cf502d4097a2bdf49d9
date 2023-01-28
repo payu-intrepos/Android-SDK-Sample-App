@@ -1,0 +1,197 @@
+
+t
+java:S2293C"YReplace the type specification in this constructor call with the diamond operator ("<>").(òæ±ºşÿÿÿÿ
+c
+java:S1192¿"GDefine a constant instead of duplicating this literal "SAMPAY" 3 times.(‡Ä‹ûÿÿÿÿ
+I
+java:S1121m".Extract the assignment out of this expression.(Ò—©¹ùÿÿÿÿ
+Q
+java:S1141µ"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+b
+java:S1301‹"KReplace this "switch" statement by "if" statements to increase readability.(¡õ‡ï
+h
+java:S1104B"RMake bundle a static final constant or non-public and provide accessors if needed.(¯Ë ê
+t
+java:S1104J"YMake mPayuResponse a static final constant or non-public and provide accessors if needed.(ø’ğùÿÿÿÿ
+h
+java:S1104_"SMake cardbin a static final constant or non-public and provide accessors if needed.(Ûóñg
+o
+java:S1104c"YMake isSiSupported a static final constant or non-public and provide accessors if needed.(ßÇõ¼
+s
+java:S1104d"XMake errorMessage a static final constant or non-public and provide accessors if needed.(·›‘øÿÿÿÿ
+F
+java:S5411"*Use the primitive boolean expression here.(ƒ”‘Ùùÿÿÿÿ
+@
+java:S5411“"*Use the primitive boolean expression here.(Úµ*
+A
+java:S5411œ"*Use the primitive boolean expression here.(ù÷É¡
+@
+java:S5411¤"*Use the primitive boolean expression here.(şÑƒ
+F
+java:S5411¨"*Use the primitive boolean expression here.(»…ÓÕşÿÿÿÿ
+A
+java:S5411¬"*Use the primitive boolean expression here.(ıºœº
+A
+java:S5411±"*Use the primitive boolean expression here.(¿ûä‚
+A
+java:S5411¶"*Use the primitive boolean expression here.(”‹²ç
+F
+java:S5411º"*Use the primitive boolean expression here.(€§ÇÚıÿÿÿÿ
+@
+java:S5411ñ"*Use the primitive boolean expression here.(À„Á
+n	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Œ—ë5
+]
+java:S3973‰"GUse indentation to denote the code conditionally executed by this "if".(²›£r
+e
+java:S3973‹"IUse indentation to denote the code conditionally executed by this "else".(„¶áìøÿÿÿÿ
+c
+java:S3973"GUse indentation to denote the code conditionally executed by this "if".(ƒ¦Àéùÿÿÿÿ
+£
+java:S2681"†This line will not be executed conditionally; only the first line of this 2-line block will be. The rest will execute unconditionally.(ƒ¦Àéùÿÿÿÿ
+
+java:S2681"†This line will not be executed conditionally; only the first line of this 2-line block will be. The rest will execute unconditionally.(ç¥òÍ
+a
+java:S2259Œ"KA "NullPointerException" could be thrown; "mPayuResponse" is nullable here.(ÂÄ™L
+S
+java:S2589 "7Remove this expression which always evaluates to "true"(¡¦šçıÿÿÿÿ
+t
+java:S4144½"^Update this method so that its implementation is not identical to "hide_keyboard" on line 434.(°¦Ó7
+o
+java:S1450K"YRemove the "mPayuUtils" field and declare it as a local variable in the relevant methods.(ÔÄª®
+p
+java:S1450G"ZRemove the "merchantKey" field and declare it as a local variable in the relevant methods.(¶¥ìˆ
+v
+java:S1450N"[Remove the "pagerAdapter" field and declare it as a local variable in the relevant methods.(´°¶úÿÿÿÿ
+r
+java:S1450U"WRemove the "postData" field and declare it as a local variable in the relevant methods.(¾‘Âûÿÿÿÿ
+z
+java:S1450P"_Remove the "slidingTabLayout" field and declare it as a local variable in the relevant methods.(Îÿúîúÿÿÿÿ
+t
+java:S1450H"^Remove the "userCredentials" field and declare it as a local variable in the relevant methods.(Ëª´Ù
+z
+java:S1450W"dRemove the "valueAddedServiceTask" field and declare it as a local variable in the relevant methods.(ß³ò
+m
+java:S3776i"RRefactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed.(¨Œşÿÿÿÿ
+Q	java:S125e"<This block of commented-out lines of code should be removed.(Ûñ¸ú
+?
+java:S1185…"(Remove this method to simply inherit it.(‡½¯Õ
+o	java:S131‹"YComplete cases by adding the missing enum constants or add a default case to this switch.(¡õ‡ï
+L
+java:S2209š"5Change this instance-reference to a static reference.( ÕÉ´
+L
+java:S2209›"5Change this instance-reference to a static reference.(³´–‡
+X
+java:S1117¯"<Rename "postData" which hides the field declared at line 85.(ñ€İîÿÿÿÿÿ
+f
+java:S3252°"OUse static access with "com.payu.paymentparamhelper.PayuErrors" for "NO_ERROR".(Îé¶Ì
+F
+java:S1874¸"/Remove this use of "execute"; it is deprecated.(Ì„‡è
+Y
+java:S1126à"BReplace this if-then-else statement by a single method invocation.(‡”Šƒ
+W
+java:S1854ğ";Remove this useless assignment to local variable "lazypay".(úË÷úÿÿÿÿ
+H
+java:S1481ğ",Remove this unused "lazypay" local variable.(úË÷úÿÿÿÿ
+m
+java:S3252ù"QUse static access with "com.payu.paymentparamhelper.PayuConstants" for "DEFAULT".(•Óñ­ıÿÿÿÿ
+h
+java:S3252ú"QUse static access with "com.payu.paymentparamhelper.PayuConstants" for "DEFAULT".(•Ôë¾
+h
+java:S3252û"QUse static access with "com.payu.paymentparamhelper.PayuConstants" for "DEFAULT".(‘‘¶‘
+k
+java:S3252ı"OUse static access with "com.payu.paymentparamhelper.PayuErrors" for "NO_ERROR".(Áô“üÿÿÿÿ
+K
+java:S1874€"/Remove this use of "execute"; it is deprecated.(¥‰ğúÿÿÿÿ
+h
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 62 to the 15 allowed.(ş—è/
+L
+java:S1172"6Remove this unused method parameter "binInfoResponse".(ş—è/
+k
+java:S3252"OUse static access with "com.payu.paymentparamhelper.PayuErrors" for "NO_ERROR".(ƒ”‘Ùùÿÿÿÿ
+R	java:S125 "<This block of commented-out lines of code should be removed.(ºªêê
+>
+java:S1125¾"'Remove the unnecessary boolean literal.(ê×Ò¿
+W	java:S125Â"<This block of commented-out lines of code should be removed.(’ô°æşÿÿÿÿ
+G
+java:S1874ß"0Remove this use of "getColor"; it is deprecated.(·ìí
+
+java:S1186è"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(ø´´øÿÿÿÿ
+
+java:S1186©"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(™Î«şÿÿÿÿ
+U
+java:S1155õ">Use isEmpty() to check whether the collection is empty or not.(Â´º°
+W	java:S125ú"<This block of commented-out lines of code should be removed.(ş£æşÿÿÿÿ
+Y
+java:S1126‚"BReplace this if-then-else statement by a single method invocation.(Ô¢üà
+i	java:S100²"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÚÂ™ùÿÿÿÿ
+c
+java:S3252³"LUse static access with "android.content.Context" for "INPUT_METHOD_SERVICE".(ç¬ü•
+Z
+java:S1155Ç">Use isEmpty() to check whether the collection is empty or not.(áâÎñşÿÿÿÿ
+8	java:S131È""Add a default case to this switch.(ÄôÁ
+W	java:S125Ê"<This block of commented-out lines of code should be removed.(İ’•îüÿÿÿÿ
+W	java:S125í"<This block of commented-out lines of code should be removed.(€¶ñùÿÿÿÿ
+f
+java:S3252û"OUse static access with "com.payu.paymentparamhelper.PayuErrors" for "NO_ERROR".(Õ¹Ÿ„
+U
+java:S1874ÿ">Remove this use of "startActivityForResult"; it is deprecated.(šÔåó
+p
+java:S3252"TUse static access with "com.payu.paymentparamhelper.PayuConstants" for "PAYU_MONEY".(İöõøÿÿÿÿ
+d
+java:S3252–"MUse static access with "com.payu.paymentparamhelper.PayuConstants" for "TEZ".(èÖğÚ
+k
+java:S3252"TUse static access with "com.payu.paymentparamhelper.PayuConstants" for "UPI_INTENT".(‹ÉÓÑ
+n
+java:S3252§"XUse static access with "com.payu.paymentparamhelper.PayuConstants" for "PHONEPE_INTENT".(«‰µj
+R	java:S125´"<This block of commented-out lines of code should be removed.(•¢Âı
+i
+java:S3252¶"MUse static access with "com.payu.paymentparamhelper.PayuConstants" for "EMI".(üÂ„ıÿÿÿÿ
+l
+java:S3252Ó"UUse static access with "com.payu.paymentparamhelper.PayuConstants" for "SAMSUNG_PAY".(´Ø‰Ø
+m
+java:S1854à"QRemove this useless assignment to local variable "enableOneClickPaymentCheckBox".(ÔĞª™ıÿÿÿÿ
+^
+java:S1481à"BRemove this unused "enableOneClickPaymentCheckBox" local variable.(ÔĞª™ıÿÿÿÿ
+C
+java:S1125ó"'Remove the unnecessary boolean literal.(â­Ğşÿÿÿÿÿ
+c
+java:S3252ı"LUse static access with "com.payu.paymentparamhelper.PayuConstants" for "CC".(Ş¼ØÀ
+C
+java:S1125‘"'Remove the unnecessary boolean literal.(â­Ğşÿÿÿÿÿ
+h
+java:S3252˜"LUse static access with "com.payu.paymentparamhelper.PayuConstants" for "NB".(ÜÔô˜şÿÿÿÿ
+j
+java:S3252¬"NUse static access with "com.payu.paymentparamhelper.PayuConstants" for "CASH".(¬îÙÙıÿÿÿÿ
+i
+java:S3252Î"MUse static access with "com.payu.paymentparamhelper.PayuConstants" for "EMI".(üÂ„ıÿÿÿÿ
+T
+java:S1117×"=Rename "viewPager" which hides the field declared at line 79.(ş¦‘Ğ
+C
+java:S1125è"'Remove the unnecessary boolean literal.(â­Ğşÿÿÿÿÿ
+c
+java:S3252î"LUse static access with "com.payu.paymentparamhelper.PayuConstants" for "CC".(Ş¼ØÀ
+W	java:S125ô"<This block of commented-out lines of code should be removed.(š¶åÿÿÿÿÿ
+r
+java:S3252˜"VUse static access with "com.payu.paymentparamhelper.PayuConstants" for "MAX_VPA_SIZE".(¿²Ô¸ÿÿÿÿÿ
+c
+java:S3252£"MUse static access with "com.payu.paymentparamhelper.PayuConstants" for "UPI".(à˜·e
+a
+java:S1874´"JDon't override a deprecated method or explicitly mark it as "@Deprecated".(ŸŒ¹Ñ
+c
+java:S3252¾"LUse static access with "android.content.Context" for "INPUT_METHOD_SERVICE".(ç¬ü•
+S
+java:S1117Ò"<Rename "postData" which hides the field declared at line 85.(…šØË
+f
+java:S3252Ô"OUse static access with "com.payu.paymentparamhelper.PayuErrors" for "NO_ERROR".(Îé¶Ì
+E
+java:S1874Ø"/Remove this use of "execute"; it is deprecated.(çÉæU
+X
+java:S1126ñ"BReplace this if-then-else statement by a single method invocation.(À„Á
+K
+java:S1068F"5Remove this unused "paymentPostParams" private field.(Êê¼Û
+D
+java:S1068K".Remove this unused "mPayuUtils" private field.(ÔÄª®
+M
+java:S1068V"2Remove this unused "samPayPostData" private field.(‡ìé­øÿÿÿÿ
+M
+java:S1068["2Remove this unused "payUSamsungPay" private field.(ßİĞ…ÿÿÿÿÿ
