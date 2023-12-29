@@ -268,8 +268,8 @@ public class MainActivity extends AppCompatActivity {
          * Furl --> Failre url is where the transaction response is posted by PayU on failed transaction
          */
        // mPaymentParams.setSurl(" https://www.fitternity.com/paymentsuccessandroid");
-        mPaymentParams.setSurl("https://payuresponse.firebaseapp.com/success");
-        mPaymentParams.setFurl("https://payuresponse.firebaseapp.com/failure");
+        mPaymentParams.setSurl("https://cbjs.payu.in/sdk/success");
+        mPaymentParams.setFurl("https://cbjs.payu.in/sdk/failure");
       //  mPaymentParams.setFurl("https://www.fitternity.com/paymentsuccessandroid");
         mPaymentParams.setNotifyURL(mPaymentParams.getSurl());  //for lazy pay
 
